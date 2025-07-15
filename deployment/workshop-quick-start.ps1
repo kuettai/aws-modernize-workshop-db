@@ -55,14 +55,33 @@ EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServe
     # =============================================
     Write-Log "Installing .NET 6 SDK..."
     if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
-        $DotNetUrl = "https://download.visualstudio.microsoft.com/download/pr/17b6759f-1af0-41bc-ab12-209ba0377779/e8d02195dbf1434b940e0f05ae086453/dotnet-sdk-6.0.425-win-x64.exe"
-        $DotNetPath = "C:\Workshop\dotnet-sdk-6.0.exe"
-        Invoke-WebRequest -Uri $DotNetUrl -OutFile $DotNetPath
-        Start-Process -FilePath $DotNetPath -ArgumentList "/quiet" -Wait
-        $env:Path += ";C:\Program Files\dotnet"
-        Write-Log ".NET 6 SDK installed successfully"
+        try {
+            # Use Chocolatey to install .NET 6 SDK (more reliable)
+            if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+                Write-Log "Installing Chocolatey first..."
+                Set-ExecutionPolicy Bypass -Scope Process -Force
+                [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+                Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+                $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+            }
+            
+            Write-Log "Installing .NET 6 SDK via Chocolatey..."
+            choco install dotnet-6.0-sdk -y
+            $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+            Write-Log ".NET 6 SDK installed successfully"
+        } catch {
+            Write-Log "Failed to install .NET 6 SDK via Chocolatey, trying direct download..." "WARNING"
+            # Fallback to direct download with current URL
+            $DotNetUrl = "https://download.visualstudio.microsoft.com/download/pr/5226a5fa-8c0b-474f-b79a-8984ad7c5beb/3113ccbf789c9fd29972835f0f334b7a/dotnet-sdk-6.0.428-win-x64.exe"
+            $DotNetPath = "C:\Workshop\dotnet-sdk-6.0.exe"
+            Invoke-WebRequest -Uri $DotNetUrl -OutFile $DotNetPath -UseBasicParsing
+            Start-Process -FilePath $DotNetPath -ArgumentList "/quiet" -Wait
+            $env:Path += ";C:\Program Files\dotnet"
+            Write-Log ".NET 6 SDK installed via direct download"
+        }
     } else {
-        Write-Log ".NET 6 SDK already available"
+        $DotNetVersion = & dotnet --version
+        Write-Log ".NET SDK already available: $DotNetVersion"
     }
     
     # =============================================
@@ -77,11 +96,13 @@ EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServe
     }
     
     # Install ASP.NET Core Hosting Bundle
-    $HostingBundleUrl = "https://download.visualstudio.microsoft.com/download/pr/0c82e7e6-fdde-49f2-a69f-bd986aeec7db/9fd1c3d1c6c2c4b8b8b8b8b8b8b8b8b8/dotnet-hosting-6.0.25-win.exe"
-    $HostingBundlePath = "C:\Workshop\dotnet-hosting-bundle.exe"
-    Invoke-WebRequest -Uri $HostingBundleUrl -OutFile $HostingBundlePath -ErrorAction SilentlyContinue
-    if (Test-Path $HostingBundlePath) {
-        Start-Process -FilePath $HostingBundlePath -ArgumentList "/quiet" -Wait
+    try {
+        Write-Log "Installing ASP.NET Core Hosting Bundle..."
+        choco install dotnet-6.0-windowshosting -y -ErrorAction SilentlyContinue
+        Write-Log "ASP.NET Core Hosting Bundle installed via Chocolatey"
+    } catch {
+        Write-Log "Chocolatey installation failed, skipping hosting bundle" "WARNING"
+        Write-Log "You may need to install it manually later" "WARNING"
     }
     
     Import-Module WebAdministration -ErrorAction SilentlyContinue
