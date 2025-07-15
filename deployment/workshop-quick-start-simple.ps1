@@ -44,7 +44,8 @@ EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServe
         Write-Host "✅ .NET SDK found: $DotNetVersion" -ForegroundColor Green
     } else {
         Write-Host "⚠️  .NET SDK not found. Please install manually:" -ForegroundColor Yellow
-        Write-Host "   Download from: https://dotnet.microsoft.com/download/dotnet/6.0" -ForegroundColor White
+        Write-Host "   Download from: https://dotnet.microsoft.com/download/dotnet/9.0" -ForegroundColor White
+        Write-Host "   Or run: .\deployment\install-dotnet9-sdk.ps1" -ForegroundColor White
     }
     
     # =============================================
