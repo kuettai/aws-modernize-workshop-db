@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using LoanApplication.Repositories;
+using LoanApplication.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace LoanApplication.Controllers
 {
@@ -7,24 +8,52 @@ namespace LoanApplication.Controllers
     [Route("api/[controller]")]
     public class CustomersController : ControllerBase
     {
-        private readonly ICustomerRepository _customerRepository;
+        private readonly LoanApplicationContext _context;
 
-        public CustomersController(ICustomerRepository customerRepository)
+        public CustomersController(LoanApplicationContext context)
         {
-            _customerRepository = customerRepository;
+            _context = context;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCustomers()
         {
-            var customers = await _customerRepository.GetAllCustomersAsync();
-            return Ok(customers.Take(10)); // Return first 10 for demo
+            var customers = await _context.Customers
+                .Where(c => c.IsActive)
+                .Select(c => new {
+                    c.CustomerId,
+                    c.CustomerNumber,
+                    c.FirstName,
+                    c.LastName,
+                    c.Email,
+                    c.MonthlyIncome,
+                    c.EmploymentStatus
+                })
+                .OrderBy(c => c.LastName)
+                .Take(10)
+                .ToListAsync();
+            
+            return Ok(customers);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCustomer(int id)
         {
-            var customer = await _customerRepository.GetCustomerByIdAsync(id);
+            var customer = await _context.Customers
+                .Where(c => c.CustomerId == id && c.IsActive)
+                .Select(c => new {
+                    c.CustomerId,
+                    c.CustomerNumber,
+                    c.FirstName,
+                    c.LastName,
+                    c.Email,
+                    c.MonthlyIncome,
+                    c.EmploymentStatus,
+                    c.DateOfBirth,
+                    c.Phone
+                })
+                .FirstOrDefaultAsync();
+            
             if (customer == null)
                 return NotFound();
             
@@ -34,14 +63,25 @@ namespace LoanApplication.Controllers
         [HttpGet("count")]
         public async Task<IActionResult> GetCount()
         {
-            var count = await _customerRepository.GetCustomerCountAsync();
+            var count = await _context.Customers.CountAsync(c => c.IsActive);
             return Ok(new { count });
         }
 
         [HttpGet("{id}/history")]
         public async Task<IActionResult> GetLoanHistory(int id)
         {
-            var history = await _customerRepository.GetCustomerLoanHistoryAsync(id);
+            var history = await _context.Applications
+                .Where(a => a.CustomerId == id)
+                .Select(a => new {
+                    a.ApplicationId,
+                    a.ApplicationNumber,
+                    a.RequestedAmount,
+                    a.ApplicationStatus,
+                    a.SubmissionDate
+                })
+                .OrderByDescending(a => a.SubmissionDate)
+                .ToListAsync();
+            
             return Ok(history);
         }
     }
