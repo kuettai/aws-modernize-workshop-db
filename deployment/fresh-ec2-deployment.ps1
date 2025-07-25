@@ -51,14 +51,19 @@ EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServe
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
     }
     
-    # Install Git, .NET 9.0 SDK, and ASP.NET Core Hosting
-    choco install git dotnet-9.0-sdk dotnet-9.0-windowshosting -y
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-    
-    # Configure IIS
+    # Configure IIS FIRST (required for ASP.NET Core hosting bundle)
     Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole -All -NoRestart
     Enable-WindowsOptionalFeature -Online -FeatureName IIS-ASPNET45 -All -NoRestart
+    Enable-WindowsOptionalFeature -Online -FeatureName IIS-StaticContent -All -NoRestart
     Import-Module WebAdministration
+    
+    # Install Git and .NET 9.0 SDK
+    choco install git dotnet-9.0-sdk -y
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+    
+    # Install ASP.NET Core Hosting Bundle AFTER IIS
+    choco install dotnet-9.0-windowshosting -y
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
     
     Write-Host "✅ Prerequisites installed" -ForegroundColor Green
     
