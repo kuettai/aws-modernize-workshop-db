@@ -110,7 +110,7 @@ BEGIN
         WITH PaymentHistoryAnalysis AS (
             -- Get payment patterns for existing loans
             SELECT 
-                l.CustomerId,
+                a.CustomerId,
                 l.LoanId,
                 l.LoanNumber,
                 COUNT(p.PaymentId) as TotalPayments,
@@ -124,7 +124,7 @@ BEGIN
             LEFT JOIN Payments p ON l.LoanId = p.LoanId
             INNER JOIN Applications a ON l.ApplicationId = a.ApplicationId
             WHERE a.CustomerId = @CustomerId
-            GROUP BY l.CustomerId, l.LoanId, l.LoanNumber
+            GROUP BY a.CustomerId, l.LoanId, l.LoanNumber
         ),
         CreditUtilizationAnalysis AS (
             -- Analyze credit utilization patterns
