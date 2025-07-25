@@ -320,23 +320,23 @@ PRINT 'Generating Documents...';
 DECLARE @DocCount INT = 1;
 WHILE @DocCount <= 15000
 BEGIN
-    DECLARE @RandomAppId INT = CAST(RAND() * 5000 + 1 AS INT);
+    DECLARE @RandomDocAppId INT = CAST(RAND() * 5000 + 1 AS INT);
     
     INSERT INTO Documents (
         ApplicationId, DocumentType, DocumentName, FilePath, FileSize, ContentType,
         UploadedBy, UploadDate, IsVerified, VerifiedBy, VerificationDate
     )
     VALUES (
-        @RandomAppId,
+        @RandomDocAppId,
         CASE CAST(RAND() * 6 AS INT)
             WHEN 0 THEN 'Income Verification' WHEN 1 THEN 'Bank Statement' WHEN 2 THEN 'Tax Return'
             WHEN 3 THEN 'Employment Letter' WHEN 4 THEN 'ID Copy' ELSE 'Other'
         END,
         'Document_' + CAST(@DocCount AS NVARCHAR) + '_' + FORMAT(GETDATE(), 'yyyyMMdd') + '.pdf',
-        '/documents/app_' + CAST(@RandomAppId AS NVARCHAR) + '/doc_' + CAST(@DocCount AS NVARCHAR) + '.pdf',
+        '/documents/app_' + CAST(@RandomDocAppId AS NVARCHAR) + '/doc_' + CAST(@DocCount AS NVARCHAR) + '.pdf',
         CAST(RAND() * 5000000 + 100000 AS BIGINT), -- 100KB - 5MB
         'application/pdf',
-        'customer' + CAST(@RandomAppId AS NVARCHAR) + '@email.com',
+        'customer' + CAST(@RandomDocAppId AS NVARCHAR) + '@email.com',
         DATEADD(DAY, -CAST(RAND() * 365 AS INT), GETDATE()),
         CASE CAST(RAND() * 10 AS INT) WHEN 0 THEN 0 ELSE 1 END, -- 90% verified
         CASE CAST(RAND() * 10 AS INT) WHEN 0 THEN NULL ELSE 'verifier@loanapp.com' END,
@@ -381,7 +381,7 @@ PRINT 'Generating Integration Logs (High Volume)...';
 DECLARE @LogCount INT = 1;
 WHILE @LogCount <= 100000
 BEGIN
-    DECLARE @RandomAppId INT = CASE CAST(RAND() * 10 AS INT) WHEN 0 THEN NULL ELSE CAST(RAND() * 5000 + 1 AS INT) END;
+    DECLARE @RandomLogAppId INT = CASE CAST(RAND() * 10 AS INT) WHEN 0 THEN NULL ELSE CAST(RAND() * 5000 + 1 AS INT) END;
     DECLARE @LogType NVARCHAR(50) = 
         CASE CAST(RAND() * 6 AS INT)
             WHEN 0 THEN 'Credit Check' WHEN 1 THEN 'Payment Processing' WHEN 2 THEN 'Document Upload'
@@ -393,7 +393,7 @@ BEGIN
         IsSuccess, ErrorMessage, ProcessingTimeMs, LogTimestamp, CorrelationId, UserId
     )
     VALUES (
-        @RandomAppId,
+        @RandomLogAppId,
         @LogType,
         @LogType + ' Service',
         '{"request": "sample_data_' + CAST(@LogCount AS NVARCHAR) + '"}',
