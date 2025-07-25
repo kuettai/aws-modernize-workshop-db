@@ -124,7 +124,7 @@ BEGIN
             LEFT JOIN Payments p ON l.LoanId = p.LoanId
             INNER JOIN Applications a ON l.ApplicationId = a.ApplicationId
             WHERE a.CustomerId = @CustomerId
-            GROUP BY a.CustomerId, l.LoanId, l.LoanNumber
+            GROUP BY a.CustomerId, l.LoanId, l.LoanNumber, l.NextPaymentDate
         ),
         CreditUtilizationAnalysis AS (
             -- Analyze credit utilization patterns
