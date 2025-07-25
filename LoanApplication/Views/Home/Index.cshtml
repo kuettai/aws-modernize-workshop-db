@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loan Application System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .header { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .stats { display: flex; gap: 20px; margin: 20px 0; }
+        .stat-card { background-color: #e9ecef; padding: 15px; border-radius: 5px; flex: 1; }
+        .api-links { margin: 20px 0; }
+        .api-links a { display: block; margin: 5px 0; color: #007bff; text-decoration: none; }
+        .api-links a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Loan Application System</h1>
+        <p>Welcome to the AWS Database Modernization Workshop</p>
+        <p><strong>@ViewBag.DatabaseStatus</strong></p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3>Applications</h3>
+            <p><strong>@ViewBag.ApplicationCount</strong> total applications</p>
+        </div>
+        <div class="stat-card">
+            <h3>Customers</h3>
+            <p><strong>@ViewBag.CustomerCount</strong> registered customers</p>
+        </div>
+    </div>
+
+    <h2>Available API Endpoints:</h2>
+    <div class="api-links">
+        <a href="/api/applications">GET /api/applications - List all applications</a>
+        <a href="/api/applications/count">GET /api/applications/count - Application count</a>
+        <a href="/api/applications/status/Approved">GET /api/applications/status/Approved - Approved applications</a>
+        <a href="/api/customers">GET /api/customers - List all customers</a>
+        <a href="/api/customers/count">GET /api/customers/count - Customer count</a>
+        <a href="/api/customers/1">GET /api/customers/1 - Get customer by ID</a>
+    </div>
+
+    <h2>Workshop Phases:</h2>
+    <ul>
+        <li><strong>Phase 1:</strong> SQL Server → AWS RDS SQL Server</li>
+        <li><strong>Phase 2:</strong> RDS SQL Server → Aurora PostgreSQL</li>
+        <li><strong>Phase 3:</strong> IntegrationLogs → DynamoDB</li>
+    </ul>
+</body>
+</html>
