@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Workshop Architecture Documentation</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; margin: -30px -30px 30px -30px; border-radius: 8px 8px 0 0; }
+        .nav { display: flex; gap: 20px; margin: 20px 0; }
+        .nav a { padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+        .nav a:hover { background: #0056b3; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
+        .stat-card { background: #e9ecef; padding: 20px; border-radius: 8px; text-align: center; }
+        .stat-number { font-size: 2em; font-weight: bold; color: #007bff; }
+        .section { margin: 30px 0; }
+        .code-block { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 5px; padding: 15px; margin: 15px 0; overflow-x: auto; }
+        .architecture-diagram { background: #f8f9fa; border: 2px dashed #dee2e6; padding: 30px; text-align: center; margin: 20px 0; border-radius: 8px; }
+        .migration-phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .phase-card { border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; }
+        .phase-1 { border-color: #28a745; }
+        .phase-2 { border-color: #ffc107; }
+        .phase-3 { border-color: #dc3545; }
+        .api-endpoint { background: #e7f3ff; border-left: 4px solid #007bff; padding: 10px; margin: 10px 0; }
+        .table-info { background: #f8f9fa; border-radius: 5px; padding: 15px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ AWS Database Modernization Workshop</h1>
+            <h2>Architecture & Codebase Documentation</h2>
+            <p>Complete guide to the Loan Application System baseline environment</p>
+        </div>
+
+        <div class="nav">
+            <a href="/docs">Overview</a>
+            <a href="/docs/architecture">Architecture</a>
+            <a href="/docs/database">Database</a>
+            <a href="/docs/migration">Migration Plan</a>
+            <a href="/">← Back to Application</a>
+        </div>
+
+        <div class="section">
+            <h2>📊 Live Database Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">@ViewBag.DatabaseStats.Applications</div>
+                    <div>Applications</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@ViewBag.DatabaseStats.Customers</div>
+                    <div>Customers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@ViewBag.DatabaseStats.Loans</div>
+                    <div>Active Loans</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@ViewBag.DatabaseStats.Payments</div>
+                    <div>Payment Records</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@ViewBag.DatabaseStats.Documents</div>
+                    <div>Documents</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@ViewBag.DatabaseStats.CreditChecks</div>
+                    <div>Credit Checks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@ViewBag.DatabaseStats.IntegrationLogs</div>
+                    <div>Integration Logs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@ViewBag.DatabaseStats.AuditTrail</div>
+                    <div>Audit Records</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🏛️ System Architecture Overview</h2>
+            <div class="architecture-diagram">
+                <pre style="text-align: left; font-family: monospace;">
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Web Browser   │───▶│   IIS Server    │───▶│  SQL Server     │
+│                 │    │                 │    │                 │
+│ - Customers     │    │ - .NET 9.0 App  │    │ - Applications  │
+│ - Loan Officers │    │ - ASP.NET Core  │    │ - Customers     │
+│ - Admins        │    │ - MVC + Web API │    │ - Loans         │
+└─────────────────┘    └─────────────────┘    │ - Payments      │
+                                              │ - Documents     │
+                                              │ - Audit Logs    │
+                                              └─────────────────┘
+                </pre>
+            </div>
+            
+            <h3>Technology Stack</h3>
+            <ul>
+                <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript (Vanilla)</li>
+                <li><strong>Backend:</strong> .NET 9.0, ASP.NET Core MVC</li>
+                <li><strong>Database:</strong> SQL Server 2022 Web Edition</li>
+                <li><strong>Web Server:</strong> IIS 10.0</li>
+                <li><strong>ORM:</strong> Entity Framework Core 9.0</li>
+                <li><strong>Authentication:</strong> SQL Server Authentication</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🔗 API Endpoints</h2>
+            <p>The application exposes RESTful APIs for integration and testing:</p>
+            
+            <div class="api-endpoint">
+                <strong>GET</strong> <a href="/api/applications">/api/applications</a> - List all loan applications
+            </div>
+            <div class="api-endpoint">
+                <strong>GET</strong> <a href="/api/applications/count">/api/applications/count</a> - Get application count
+            </div>
+            <div class="api-endpoint">
+                <strong>GET</strong> <a href="/api/applications/status/Approved">/api/applications/status/Approved</a> - Filter by status
+            </div>
+            <div class="api-endpoint">
+                <strong>GET</strong> <a href="/api/customers">/api/customers</a> - List all customers
+            </div>
+            <div class="api-endpoint">
+                <strong>GET</strong> <a href="/api/customers/1">/api/customers/1</a> - Get specific customer
+            </div>
+            <div class="api-endpoint">
+                <strong>GET</strong> <a href="/api/customers/count">/api/customers/count</a> - Get customer count
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📁 Project Structure</h2>
+            <div class="code-block">
+<pre>LoanApplication/
+├── Controllers/
+│   ├── HomeController.cs          # Main application pages
+│   ├── ApplicationsController.cs  # Loan applications API
+│   ├── CustomersController.cs     # Customer management API
+│   └── DocsController.cs          # This documentation
+├── Models/
+│   ├── Application.cs             # Loan application entity
+│   ├── Customer.cs                # Customer entity
+│   ├── Loan.cs                    # Loan entity
+│   ├── Payment.cs                 # Payment entity
+│   └── ...                        # Other entities
+├── Data/
+│   └── LoanApplicationContext.cs  # Entity Framework context
+├── Services/
+│   ├── LoanService.cs             # Business logic for loans
+│   ├── CreditCheckService.cs      # Credit verification
+│   └── DSRCalculationService.cs   # Debt-to-income calculations
+├── Repositories/
+│   ├── ApplicationRepository.cs   # Data access layer
+│   └── CustomerRepository.cs      # Customer data access
+└── Views/
+    ├── Home/                      # Main application views
+    └── Docs/                      # Documentation views
+</pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Workshop Migration Phases</h2>
+            <div class="migration-phases">
+                <div class="phase-card phase-1">
+                    <h3>Phase 1: Lift & Shift</h3>
+                    <p><strong>SQL Server → AWS RDS SQL Server</strong></p>
+                    <ul>
+                        <li>Migrate to managed SQL Server</li>
+                        <li>Minimal application changes</li>
+                        <li>Focus on infrastructure benefits</li>
+                        <li>Performance comparison</li>
+                    </ul>
+                </div>
+                <div class="phase-card phase-2">
+                    <h3>Phase 2: Database Modernization</h3>
+                    <p><strong>RDS SQL Server → Aurora PostgreSQL</strong></p>
+                    <ul>
+                        <li>Schema conversion challenges</li>
+                        <li>Stored procedure migration</li>
+                        <li>Application code updates</li>
+                        <li>Data migration with DMS</li>
+                    </ul>
+                </div>
+                <div class="phase-card phase-3">
+                    <h3>Phase 3: NoSQL Integration</h3>
+                    <p><strong>IntegrationLogs → DynamoDB</strong></p>
+                    <ul>
+                        <li>High-volume log data migration</li>
+                        <li>Time-series data patterns</li>
+                        <li>Application integration</li>
+                        <li>Cost optimization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>💡 Key Learning Objectives</h2>
+            <ul>
+                <li><strong>Assessment:</strong> Evaluate existing applications for cloud migration</li>
+                <li><strong>Strategy:</strong> Choose appropriate migration patterns (Lift & Shift vs. Modernization)</li>
+                <li><strong>Tools:</strong> Use AWS Database Migration Service (DMS) and Schema Conversion Tool (SCT)</li>
+                <li><strong>Challenges:</strong> Handle stored procedure conversion and data type mapping</li>
+                <li><strong>Optimization:</strong> Leverage cloud-native database features</li>
+                <li><strong>Monitoring:</strong> Implement proper logging and performance monitoring</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Getting Started</h2>
+            <ol>
+                <li><strong>Explore the Application:</strong> Navigate through the <a href="/">main application</a></li>
+                <li><strong>Test API Endpoints:</strong> Use the links above to see live data</li>
+                <li><strong>Review Database Schema:</strong> Check the <a href="/docs/database">database documentation</a></li>
+                <li><strong>Understand Architecture:</strong> Study the <a href="/docs/architecture">detailed architecture</a></li>
+                <li><strong>Begin Migration:</strong> Follow the <a href="/docs/migration">migration guide</a></li>
+            </ol>
+        </div>
+
+        <div class="section" style="background: #e7f3ff; padding: 20px; border-radius: 8px; margin-top: 40px;">
+            <h3>🚀 Ready to Start?</h3>
+            <p>This baseline environment represents a typical enterprise loan application system. You'll migrate this through three phases, learning AWS database services and modernization patterns along the way.</p>
+            <p><strong>Next:</strong> Begin with <a href="/docs/architecture">detailed architecture review</a> or jump into <a href="/docs/migration">Phase 1 migration planning</a>.</p>
+        </div>
+    </div>
+</body>
+</html>

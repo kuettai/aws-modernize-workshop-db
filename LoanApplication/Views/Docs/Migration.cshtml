@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Migration Strategy - Workshop Documentation</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; margin: -30px -30px 30px -30px; border-radius: 8px 8px 0 0; }
+        .nav { display: flex; gap: 20px; margin: 20px 0; }
+        .nav a { padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+        .nav a:hover { background: #0056b3; }
+        .section { margin: 30px 0; }
+        .phase-timeline { display: flex; justify-content: space-between; margin: 30px 0; position: relative; }
+        .phase-timeline::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: #dee2e6; z-index: 1; }
+        .phase-step { background: white; border: 3px solid #dee2e6; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; position: relative; z-index: 2; }
+        .phase-1 { border-color: #28a745; background: #28a745; color: white; }
+        .phase-2 { border-color: #ffc107; background: #ffc107; color: black; }
+        .phase-3 { border-color: #dc3545; background: #dc3545; color: white; }
+        .phase-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin: 30px 0; }
+        .phase-card { border: 2px solid #dee2e6; border-radius: 12px; padding: 25px; }
+        .phase-card.phase-1 { border-color: #28a745; }
+        .phase-card.phase-2 { border-color: #ffc107; }
+        .phase-card.phase-3 { border-color: #dc3545; }
+        .code-block { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 5px; padding: 15px; margin: 15px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+        .migration-diagram { background: #f8f9fa; border: 2px dashed #dee2e6; padding: 30px; margin: 20px 0; border-radius: 8px; overflow-x: auto; }
+        .challenge-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0; }
+        .benefit-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 15px 0; }
+        .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0; }
+        .tool-card { border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; text-align: center; }
+        .checklist { background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .checklist ul { list-style: none; padding: 0; }
+        .checklist li { padding: 5px 0; }
+        .checklist li::before { content: '✅ '; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Migration Strategy</h1>
+            <h2>Three-Phase Database Modernization Journey</h2>
+            <p>Complete roadmap from SQL Server to cloud-native architecture</p>
+        </div>
+
+        <div class="nav">
+            <a href="/docs">Overview</a>
+            <a href="/docs/architecture">Architecture</a>
+            <a href="/docs/database">Database</a>
+            <a href="/docs/migration">Migration Plan</a>
+            <a href="/">← Back to Application</a>
+        </div>
+
+        <div class="section">
+            <h2>🗺️ Migration Timeline</h2>
+            <div class="phase-timeline">
+                <div class="phase-step phase-1">1</div>
+                <div class="phase-step phase-2">2</div>
+                <div class="phase-step phase-3">3</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                <div style="text-align: center; flex: 1;"><strong>Lift & Shift</strong><br>SQL Server → RDS</div>
+                <div style="text-align: center; flex: 1;"><strong>Modernize</strong><br>RDS → PostgreSQL</div>
+                <div style="text-align: center; flex: 1;"><strong>Optimize</strong><br>Logs → DynamoDB</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📋 Phase Details</h2>
+            <div class="phase-details">
+                <div class="phase-card phase-1">
+                    <h3>Phase 1: Lift & Shift to RDS</h3>
+                    <h4>🎯 Objective:</h4>
+                    <p>Move from on-premises SQL Server to AWS RDS SQL Server with minimal changes.</p>
+                    
+                    <h4>🔧 Approach:</h4>
+                    <ul>
+                        <li>Database backup and restore</li>
+                        <li>Connection string updates</li>
+                        <li>Security group configuration</li>
+                        <li>Performance baseline establishment</li>
+                    </ul>
+
+                    <h4>⏱️ Duration:</h4>
+                    <p>2-3 hours</p>
+
+                    <h4>🎓 Learning Outcomes:</h4>
+                    <ul>
+                        <li>RDS instance configuration</li>
+                        <li>Database migration basics</li>
+                        <li>AWS networking concepts</li>
+                        <li>Performance monitoring setup</li>
+                    </ul>
+                </div>
+
+                <div class="phase-card phase-2">
+                    <h3>Phase 2: Modernize to PostgreSQL</h3>
+                    <h4>🎯 Objective:</h4>
+                    <p>Convert from SQL Server to Aurora PostgreSQL, addressing schema and code differences.</p>
+                    
+                    <h4>🔧 Approach:</h4>
+                    <ul>
+                        <li>AWS Schema Conversion Tool (SCT)</li>
+                        <li>Database Migration Service (DMS)</li>
+                        <li>Stored procedure conversion</li>
+                        <li>Application code updates</li>
+                    </ul>
+
+                    <h4>⏱️ Duration:</h4>
+                    <p>4-5 hours</p>
+
+                    <h4>🎓 Learning Outcomes:</h4>
+                    <ul>
+                        <li>Cross-platform database migration</li>
+                        <li>Schema conversion challenges</li>
+                        <li>PostgreSQL best practices</li>
+                        <li>Application refactoring</li>
+                    </ul>
+                </div>
+
+                <div class="phase-card phase-3">
+                    <h3>Phase 3: NoSQL Integration</h3>
+                    <h4>🎯 Objective:</h4>
+                    <p>Move high-volume IntegrationLogs to DynamoDB for better performance and cost optimization.</p>
+                    
+                    <h4>🔧 Approach:</h4>
+                    <ul>
+                        <li>DynamoDB table design</li>
+                        <li>Data migration strategy</li>
+                        <li>Application integration</li>
+                        <li>Hybrid data access patterns</li>
+                    </ul>
+
+                    <h4>⏱️ Duration:</h4>
+                    <p>2-3 hours</p>
+
+                    <h4>🎓 Learning Outcomes:</h4>
+                    <ul>
+                        <li>NoSQL design principles</li>
+                        <li>DynamoDB best practices</li>
+                        <li>Polyglot persistence</li>
+                        <li>Cost optimization strategies</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🏗️ Architecture Evolution</h2>
+            <div class="migration-diagram">
+                <h3>Current State (Baseline):</h3>
+                <pre style="font-family: monospace; font-size: 12px;">
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   .NET 9.0 App  │───▶│   IIS Server    │───▶│  SQL Server     │
+│                 │    │                 │    │                 │
+│ • Controllers   │    │ • ASP.NET Core  │    │ • All Tables    │
+│ • Services      │    │ • Entity Framework  │ • Stored Procs  │
+│ • Repositories  │    │ • Connection Pool   │ • 200K+ Records │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+</pre>
+
+                <h3>After Phase 1 (RDS SQL Server):</h3>
+                <pre style="font-family: monospace; font-size: 12px;">
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   .NET 9.0 App  │───▶│   EC2/ECS       │───▶│   RDS SQL       │
+│                 │    │                 │    │                 │
+│ • Same Code     │    │ • Same Runtime  │    │ • Managed DB    │
+│ • New Conn Str  │    │ • Cloud Hosting │    │ • Backups       │
+│ • Monitoring    │    │ • Auto Scaling  │    │ • Multi-AZ      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+</pre>
+
+                <h3>After Phase 2 (Aurora PostgreSQL):</h3>
+                <pre style="font-family: monospace; font-size: 12px;">
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   .NET 9.0 App  │───▶│   EC2/ECS       │───▶│ Aurora PostgreSQL│
+│                 │    │                 │    │                 │
+│ • Updated Code  │    │ • Same Runtime  │    │ • Open Source   │
+│ • New Provider  │    │ • Cloud Hosting │    │ • Better Perf   │
+│ • Refactored    │    │ • Monitoring    │    │ • Lower Cost    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+</pre>
+
+                <h3>After Phase 3 (Hybrid Architecture):</h3>
+                <pre style="font-family: monospace; font-size: 12px;">
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   .NET 9.0 App  │───▶│   EC2/ECS       │───▶│ Aurora PostgreSQL│
+│                 │    │                 │    │                 │
+│ • Hybrid Data   │    │ • Same Runtime  │    │ • Core Business │
+│ • Multiple SDKs │    │ • Cloud Hosting │    │ • ACID Trans    │
+│ • Smart Routing │    │ • Monitoring    │    │ • Relational    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │   DynamoDB      │
+                       │                 │
+                       │ • Integration   │
+                       │   Logs (149K+)  │
+                       │ • High Volume   │
+                       │ • Time Series   │
+                       └─────────────────┘
+</pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ Tools & Services Used</h2>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <h4>AWS RDS</h4>
+                    <p>Managed relational database service for SQL Server and PostgreSQL hosting</p>
+                </div>
+                <div class="tool-card">
+                    <h4>AWS DMS</h4>
+                    <p>Database Migration Service for data replication and migration</p>
+                </div>
+                <div class="tool-card">
+                    <h4>AWS SCT</h4>
+                    <p>Schema Conversion Tool for database schema transformation</p>
+                </div>
+                <div class="tool-card">
+                    <h4>DynamoDB</h4>
+                    <p>NoSQL database service for high-volume, time-series data</p>
+                </div>
+                <div class="tool-card">
+                    <h4>CloudWatch</h4>
+                    <p>Monitoring and logging service for performance tracking</p>
+                </div>
+                <div class="tool-card">
+                    <h4>AWS CLI</h4>
+                    <p>Command-line interface for AWS service management</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>⚠️ Key Challenges & Solutions</h2>
+            
+            <div class="challenge-box">
+                <h4>Challenge: Complex Stored Procedures</h4>
+                <p><strong>Issue:</strong> SQL Server T-SQL features like cursors, temp tables, and dynamic SQL don't directly translate to PostgreSQL.</p>
+                <p><strong>Solution:</strong> Convert to PL/pgSQL or move logic to application layer. Use AWS SCT for automated conversion with manual refinement.</p>
+            </div>
+
+            <div class="challenge-box">
+                <h4>Challenge: Data Type Mapping</h4>
+                <p><strong>Issue:</strong> SQL Server NVARCHAR, DATETIME2, UNIQUEIDENTIFIER don't have direct PostgreSQL equivalents.</p>
+                <p><strong>Solution:</strong> Use VARCHAR, TIMESTAMP, UUID respectively. Update application code for type handling.</p>
+            </div>
+
+            <div class="challenge-box">
+                <h4>Challenge: High-Volume Logging Data</h4>
+                <p><strong>Issue:</strong> IntegrationLogs table (149K+ records) causes performance issues in relational database.</p>
+                <p><strong>Solution:</strong> Migrate to DynamoDB with time-based partition keys for better performance and cost efficiency.</p>
+            </div>
+
+            <div class="challenge-box">
+                <h4>Challenge: Application Integration</h4>
+                <p><strong>Issue:</strong> Need to support multiple database types simultaneously during migration.</p>
+                <p><strong>Solution:</strong> Use repository pattern with multiple implementations and feature flags for gradual migration.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>✅ Success Criteria</h2>
+            
+            <div class="benefit-box">
+                <h4>Phase 1 Success Metrics:</h4>
+                <ul>
+                    <li>Application runs without code changes</li>
+                    <li>Performance matches or exceeds baseline</li>
+                    <li>All stored procedures execute correctly</li>
+                    <li>Backup and monitoring configured</li>
+                </ul>
+            </div>
+
+            <div class="benefit-box">
+                <h4>Phase 2 Success Metrics:</h4>
+                <ul>
+                    <li>All data migrated successfully</li>
+                    <li>Application functionality preserved</li>
+                    <li>Stored procedures converted or refactored</li>
+                    <li>Performance optimized for PostgreSQL</li>
+                </ul>
+            </div>
+
+            <div class="benefit-box">
+                <h4>Phase 3 Success Metrics:</h4>
+                <ul>
+                    <li>IntegrationLogs moved to DynamoDB</li>
+                    <li>Improved query performance for logs</li>
+                    <li>Cost reduction achieved</li>
+                    <li>Hybrid data access working</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Expected Benefits</h2>
+            <div class="phase-details">
+                <div class="phase-card">
+                    <h3>Cost Optimization</h3>
+                    <ul>
+                        <li>Reduced licensing costs (PostgreSQL)</li>
+                        <li>Pay-per-use pricing (DynamoDB)</li>
+                        <li>Managed service benefits</li>
+                        <li>Auto-scaling capabilities</li>
+                    </ul>
+                </div>
+                <div class="phase-card">
+                    <h3>Performance Improvements</h3>
+                    <ul>
+                        <li>Aurora PostgreSQL optimizations</li>
+                        <li>DynamoDB single-digit latency</li>
+                        <li>Better resource utilization</li>
+                        <li>Horizontal scaling options</li>
+                    </ul>
+                </div>
+                <div class="phase-card">
+                    <h3>Operational Excellence</h3>
+                    <ul>
+                        <li>Automated backups and patching</li>
+                        <li>Built-in monitoring and alerting</li>
+                        <li>High availability and disaster recovery</li>
+                        <li>Security best practices</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Workshop Execution Plan</h2>
+            <div class="checklist">
+                <h3>Pre-Workshop Preparation:</h3>
+                <ul>
+                    <li>Deploy baseline environment</li>
+                    <li>Verify application functionality</li>
+                    <li>Establish performance baselines</li>
+                    <li>Prepare AWS accounts and permissions</li>
+                </ul>
+            </div>
+
+            <div class="checklist">
+                <h3>Phase 1 Execution (2-3 hours):</h3>
+                <ul>
+                    <li>Create RDS SQL Server instance</li>
+                    <li>Backup and restore database</li>
+                    <li>Update connection strings</li>
+                    <li>Test application functionality</li>
+                    <li>Configure monitoring and alerts</li>
+                </ul>
+            </div>
+
+            <div class="checklist">
+                <h3>Phase 2 Execution (4-5 hours):</h3>
+                <ul>
+                    <li>Install and configure AWS SCT</li>
+                    <li>Analyze schema conversion requirements</li>
+                    <li>Create Aurora PostgreSQL cluster</li>
+                    <li>Set up DMS replication instance</li>
+                    <li>Migrate data using DMS</li>
+                    <li>Convert stored procedures</li>
+                    <li>Update application code</li>
+                    <li>Test and validate migration</li>
+                </ul>
+            </div>
+
+            <div class="checklist">
+                <h3>Phase 3 Execution (2-3 hours):</h3>
+                <ul>
+                    <li>Design DynamoDB table structure</li>
+                    <li>Create DynamoDB table</li>
+                    <li>Migrate IntegrationLogs data</li>
+                    <li>Update application for hybrid access</li>
+                    <li>Test logging functionality</li>
+                    <li>Validate performance improvements</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" style="background: #e7f3ff; padding: 25px; border-radius: 8px; border-left: 4px solid #007bff;">
+            <h3>🚀 Ready to Begin Migration?</h3>
+            <p>This three-phase approach provides a comprehensive learning experience covering:</p>
+            <ul>
+                <li>✅ <strong>Lift & Shift strategies</strong> for quick cloud adoption</li>
+                <li>✅ <strong>Database modernization</strong> with open-source alternatives</li>
+                <li>✅ <strong>NoSQL integration</strong> for specific use cases</li>
+                <li>✅ <strong>Real-world challenges</strong> and practical solutions</li>
+            </ul>
+            <p><strong>Next Steps:</strong></p>
+            <ol>
+                <li>Review the <a href="/docs/architecture">system architecture</a> and <a href="/docs/database">database schema</a></li>
+                <li>Set up your AWS environment with appropriate permissions</li>
+                <li>Begin with Phase 1: RDS SQL Server migration</li>
+            </ol>
+            <p><em>Each phase builds upon the previous one, creating a complete modernization journey from legacy to cloud-native architecture.</em></p>
+        </div>
+    </div>
+</body>
+</html>

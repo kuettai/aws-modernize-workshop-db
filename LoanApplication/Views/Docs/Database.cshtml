@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Schema - Workshop Documentation</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; margin: -30px -30px 30px -30px; border-radius: 8px 8px 0 0; }
+        .nav { display: flex; gap: 20px; margin: 20px 0; }
+        .nav a { padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+        .nav a:hover { background: #0056b3; }
+        .section { margin: 30px 0; }
+        .table-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin: 20px 0; }
+        .table-card { border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; }
+        .table-core { border-left: 4px solid #28a745; }
+        .table-support { border-left: 4px solid #007bff; }
+        .table-audit { border-left: 4px solid #ffc107; }
+        .table-migration { border-left: 4px solid #dc3545; }
+        .schema-diagram { background: #f8f9fa; border: 2px dashed #dee2e6; padding: 30px; margin: 20px 0; border-radius: 8px; overflow-x: auto; }
+        .code-block { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 5px; padding: 15px; margin: 15px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+        .relationship { background: #e7f3ff; border-left: 4px solid #007bff; padding: 15px; margin: 10px 0; }
+        .stored-proc { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 15px; margin: 10px 0; }
+        .migration-note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗄️ Database Schema</h1>
+            <h2>Complete Data Model Documentation</h2>
+            <p>Detailed breakdown of tables, relationships, and stored procedures</p>
+        </div>
+
+        <div class="nav">
+            <a href="/docs">Overview</a>
+            <a href="/docs/architecture">Architecture</a>
+            <a href="/docs/database">Database</a>
+            <a href="/docs/migration">Migration Plan</a>
+            <a href="/">← Back to Application</a>
+        </div>
+
+        <div class="section">
+            <h2>📊 Entity Relationship Diagram</h2>
+            <div class="schema-diagram">
+                <pre style="font-family: monospace; font-size: 12px; text-align: left;">
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│    Branches     │    │  LoanOfficers   │    │   Customers     │
+├─────────────────┤    ├─────────────────┤    ├─────────────────┤
+│ BranchId (PK)   │◄──┤│ LoanOfficerId   │    │ CustomerId (PK) │
+│ BranchCode      │   ││ EmployeeId      │    │ CustomerNumber  │
+│ BranchName      │   ││ FirstName       │    │ FirstName       │
+│ Address         │   ││ LastName        │    │ LastName        │
+│ City, State     │   ││ Email           │    │ Email           │
+│ Phone, Email    │   ││ BranchId (FK)   │    │ Phone           │
+└─────────────────┘   │└─────────────────┘    │ DateOfBirth     │
+                      │                       │ SSN             │
+                      │                       │ MonthlyIncome   │
+                      │                       │ EmploymentStatus│
+                      │                       └─────────────────┘
+                      │                                │
+                      │                                │
+                      ▼                                ▼
+            ┌─────────────────────────────────────────────────────┐
+            │                Applications                         │
+            ├─────────────────────────────────────────────────────┤
+            │ ApplicationId (PK)                                  │
+            │ ApplicationNumber                                   │
+            │ CustomerId (FK) ──────────────────────────────────┘
+            │ LoanOfficerId (FK) ────────────────────────────────┘
+            │ BranchId (FK) ─────────────────────────────────────┘
+            │ RequestedAmount                                     │
+            │ ApplicationStatus                                   │
+            │ SubmissionDate                                      │
+            │ DecisionDate                                        │
+            │ DSRRatio                                           │
+            └─────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+            ┌─────────────────────────────────────────────────────┐
+            │                   Loans                             │
+            ├─────────────────────────────────────────────────────┤
+            │ LoanId (PK)                                         │
+            │ ApplicationId (FK) ─────────────────────────────────┘
+            │ LoanNumber                                          │
+            │ ApprovedAmount                                      │
+            │ InterestRate                                        │
+            │ LoanTermMonths                                      │
+            │ MonthlyPayment                                      │
+            │ OutstandingBalance                                  │
+            │ LoanStatus                                          │
+            └─────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+            ┌─────────────────────────────────────────────────────┐
+            │                 Payments                            │
+            ├─────────────────────────────────────────────────────┤
+            │ PaymentId (PK)                                      │
+            │ LoanId (FK) ────────────────────────────────────────┘
+            │ PaymentNumber                                       │
+            │ PaymentDate                                         │
+            │ PaymentAmount                                       │
+            │ PrincipalAmount                                     │
+            │ InterestAmount                                      │
+            │ PaymentMethod                                       │
+            │ PaymentStatus                                       │
+            └─────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Documents     │    │  CreditChecks   │    │ IntegrationLogs │
+├─────────────────┤    ├─────────────────┤    ├─────────────────┤
+│ DocumentId (PK) │    │ CreditCheckId   │    │ LogId (PK)      │
+│ ApplicationId   │    │ CustomerId (FK) │    │ ApplicationId   │
+│ DocumentType    │    │ ApplicationId   │    │ LogType         │
+│ DocumentName    │    │ CreditBureau    │    │ ServiceName     │
+│ FilePath        │    │ CreditScore     │    │ RequestData     │
+│ UploadDate      │    │ CheckDate       │    │ ResponseData    │
+│ IsVerified      │    │ IsSuccessful    │    │ LogTimestamp    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                </pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📋 Table Categories</h2>
+            <div class="table-grid">
+                <div class="table-card table-core">
+                    <h3>Core Business Tables</h3>
+                    <ul>
+                        <li><strong>Applications:</strong> Main loan application records</li>
+                        <li><strong>Customers:</strong> Customer master data</li>
+                        <li><strong>Loans:</strong> Approved loan details</li>
+                        <li><strong>Payments:</strong> Payment transaction history</li>
+                    </ul>
+                    <p><em>These tables contain the primary business logic and will require careful migration planning.</em></p>
+                </div>
+
+                <div class="table-card table-support">
+                    <h3>Supporting Tables</h3>
+                    <ul>
+                        <li><strong>Branches:</strong> Bank branch information</li>
+                        <li><strong>LoanOfficers:</strong> Staff member details</li>
+                        <li><strong>Documents:</strong> Application document metadata</li>
+                        <li><strong>CreditChecks:</strong> Credit verification records</li>
+                    </ul>
+                    <p><em>Reference data and supporting business processes.</em></p>
+                </div>
+
+                <div class="table-card table-audit">
+                    <h3>Audit & Compliance</h3>
+                    <ul>
+                        <li><strong>AuditTrail:</strong> System change tracking</li>
+                        <li><strong>IntegrationLogs:</strong> API and service logs</li>
+                    </ul>
+                    <p><em>Compliance and monitoring data - high volume, time-series patterns.</em></p>
+                </div>
+
+                <div class="table-card table-migration">
+                    <h3>Migration Candidates</h3>
+                    <ul>
+                        <li><strong>IntegrationLogs:</strong> → DynamoDB (Phase 3)</li>
+                        <li><strong>Documents:</strong> → S3 + metadata in RDS</li>
+                        <li><strong>AuditTrail:</strong> → CloudWatch Logs</li>
+                    </ul>
+                    <p><em>Tables suitable for NoSQL or cloud-native services.</em></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔗 Key Relationships</h2>
+            <div class="relationship">
+                <h4>Customer → Application → Loan → Payments</h4>
+                <p>Primary business flow: A customer submits an application, which may be approved as a loan, generating payment records.</p>
+            </div>
+
+            <div class="relationship">
+                <h4>Branch → LoanOfficer → Applications</h4>
+                <p>Organizational structure: Each application is handled by a loan officer from a specific branch.</p>
+            </div>
+
+            <div class="relationship">
+                <h4>Application → Documents + CreditChecks</h4>
+                <p>Supporting data: Each application has associated documents and credit verification records.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Stored Procedures</h2>
+            
+            <div class="stored-proc">
+                <h4>Simple Procedures (3 procedures):</h4>
+                <ul>
+                    <li><strong>sp_GetApplicationsByStatus:</strong> Filter applications by status</li>
+                    <li><strong>sp_GetCustomerLoanHistory:</strong> Customer's loan application history</li>
+                    <li><strong>sp_UpdateApplicationStatus:</strong> Change application status with audit</li>
+                </ul>
+                <p><em>Basic CRUD operations - straightforward to convert to PostgreSQL.</em></p>
+            </div>
+
+            <div class="stored-proc">
+                <h4>Complex Procedure (1 procedure):</h4>
+                <h5>sp_ComprehensiveLoanEligibilityAssessment</h5>
+                <p><strong>Features demonstrated:</strong></p>
+                <ul>
+                    <li>Common Table Expressions (CTEs)</li>
+                    <li>Window Functions</li>
+                    <li>Temporary Tables</li>
+                    <li>Cursors</li>
+                    <li>Dynamic SQL</li>
+                    <li>Error Handling</li>
+                    <li>Transactions</li>
+                </ul>
+                <div class="code-block">
+<pre>-- Example CTE from the complex procedure
+WITH PaymentHistoryAnalysis AS (
+    SELECT 
+        a.CustomerId,
+        l.LoanId,
+        COUNT(p.PaymentId) as TotalPayments,
+        COUNT(CASE WHEN p.PaymentStatus = 'Completed' THEN 1 END) as OnTimePayments,
+        AVG(DATEDIFF(DAY, l.NextPaymentDate, p.PaymentDate)) as AvgPaymentDelay
+    FROM Loans l
+    LEFT JOIN Payments p ON l.LoanId = p.LoanId
+    INNER JOIN Applications a ON l.ApplicationId = a.ApplicationId
+    WHERE a.CustomerId = @CustomerId
+    GROUP BY a.CustomerId, l.LoanId, l.LoanNumber, l.NextPaymentDate
+)</pre>
+                </div>
+                <p><em>This procedure showcases advanced SQL Server features that will need careful conversion to PostgreSQL.</em></p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📈 Data Volume & Characteristics</h2>
+            <div class="table-grid">
+                <div class="table-card">
+                    <h4>High-Volume Tables</h4>
+                    <ul>
+                        <li><strong>IntegrationLogs:</strong> 149,000+ records</li>
+                        <li><strong>Payments:</strong> 50,000+ records</li>
+                        <li><strong>Documents:</strong> 30,000+ records</li>
+                        <li><strong>AuditTrail:</strong> 25,000+ records</li>
+                    </ul>
+                </div>
+                <div class="table-card">
+                    <h4>Medium-Volume Tables</h4>
+                    <ul>
+                        <li><strong>Applications:</strong> 5,000 records</li>
+                        <li><strong>CreditChecks:</strong> 14,000+ records</li>
+                        <li><strong>Loans:</strong> 2,000 records</li>
+                    </ul>
+                </div>
+                <div class="table-card">
+                    <h4>Reference Tables</h4>
+                    <ul>
+                        <li><strong>Customers:</strong> 1,000 records</li>
+                        <li><strong>LoanOfficers:</strong> 200 records</li>
+                        <li><strong>Branches:</strong> 50 records</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Migration Considerations</h2>
+            
+            <div class="migration-note">
+                <h4>Phase 1: SQL Server → RDS SQL Server</h4>
+                <ul>
+                    <li>Direct lift-and-shift of entire schema</li>
+                    <li>Minimal changes required</li>
+                    <li>Focus on infrastructure benefits</li>
+                </ul>
+            </div>
+
+            <div class="migration-note">
+                <h4>Phase 2: RDS SQL Server → Aurora PostgreSQL</h4>
+                <ul>
+                    <li><strong>Data Types:</strong> NVARCHAR → VARCHAR, DATETIME2 → TIMESTAMP</li>
+                    <li><strong>Identity Columns:</strong> IDENTITY → SERIAL or GENERATED</li>
+                    <li><strong>Stored Procedures:</strong> T-SQL → PL/pgSQL conversion</li>
+                    <li><strong>Functions:</strong> GETDATE() → NOW(), NEWID() → gen_random_uuid()</li>
+                </ul>
+            </div>
+
+            <div class="migration-note">
+                <h4>Phase 3: IntegrationLogs → DynamoDB</h4>
+                <ul>
+                    <li><strong>Partition Key:</strong> LogType or ServiceName</li>
+                    <li><strong>Sort Key:</strong> LogTimestamp</li>
+                    <li><strong>Access Patterns:</strong> Time-based queries, service-specific logs</li>
+                    <li><strong>Benefits:</strong> Better performance for high-volume logging</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 Sample Queries</h2>
+            <h3>Common Business Queries:</h3>
+            <div class="code-block">
+<pre>-- Get application pipeline by status
+SELECT ApplicationStatus, COUNT(*) as Count
+FROM Applications 
+WHERE IsActive = 1
+GROUP BY ApplicationStatus
+ORDER BY Count DESC;
+
+-- Customer loan performance
+SELECT 
+    c.FirstName + ' ' + c.LastName as CustomerName,
+    COUNT(a.ApplicationId) as TotalApplications,
+    COUNT(l.LoanId) as ApprovedLoans,
+    SUM(l.ApprovedAmount) as TotalLoanAmount
+FROM Customers c
+LEFT JOIN Applications a ON c.CustomerId = a.CustomerId
+LEFT JOIN Loans l ON a.ApplicationId = l.ApplicationId
+GROUP BY c.CustomerId, c.FirstName, c.LastName
+HAVING COUNT(a.ApplicationId) > 0;
+
+-- Payment performance analysis
+SELECT 
+    l.LoanNumber,
+    COUNT(p.PaymentId) as TotalPayments,
+    SUM(p.PaymentAmount) as TotalPaid,
+    l.OutstandingBalance
+FROM Loans l
+LEFT JOIN Payments p ON l.LoanId = p.LoanId
+WHERE l.LoanStatus = 'Active'
+GROUP BY l.LoanId, l.LoanNumber, l.OutstandingBalance;</pre>
+            </div>
+        </div>
+
+        <div class="section" style="background: #d1ecf1; padding: 20px; border-radius: 8px; border-left: 4px solid #0c5460;">
+            <h3>🚀 Ready for Migration?</h3>
+            <p>This database schema represents typical enterprise complexity with:</p>
+            <ul>
+                <li>✅ <strong>Normalized design</strong> with proper relationships</li>
+                <li>✅ <strong>Mixed data patterns</strong> (OLTP + logging)</li>
+                <li>✅ <strong>Complex stored procedures</strong> with advanced features</li>
+                <li>✅ <strong>Realistic data volumes</strong> for testing migration tools</li>
+            </ul>
+            <p><strong>Next:</strong> Review the <a href="/docs/migration">migration strategy</a> to understand how this schema will be transformed across the three workshop phases.</p>
+        </div>
+    </div>
+</body>
+</html>
