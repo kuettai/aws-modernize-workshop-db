@@ -244,7 +244,7 @@ if ($ConnectionString) {
 # =============================================
 Write-Log "Publishing application..."
 
-& dotnet publish --configuration Release --output $PublishDir --no-build --runtime win-x64 --self-contained false
+& dotnet publish --configuration Release --output $PublishDir --no-build --self-contained false
 if ($LASTEXITCODE -ne 0) {
     Write-Log "Failed to publish application" "ERROR"
     throw
