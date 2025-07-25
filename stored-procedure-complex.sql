@@ -117,9 +117,7 @@ BEGIN
                 COUNT(CASE WHEN p.PaymentStatus = 'Completed' THEN 1 END) as OnTimePayments,
                 COUNT(CASE WHEN p.PaymentStatus = 'Failed' THEN 1 END) as FailedPayments,
                 AVG(DATEDIFF(DAY, l.NextPaymentDate, p.PaymentDate)) as AvgPaymentDelay,
-                SUM(p.PaymentAmount) as TotalPaid,
-                -- Window function to calculate payment consistency
-                STDEV(p.PaymentAmount) OVER (PARTITION BY l.LoanId) as PaymentVariability
+                SUM(p.PaymentAmount) as TotalPaid
             FROM Loans l
             LEFT JOIN Payments p ON l.LoanId = p.LoanId
             INNER JOIN Applications a ON l.ApplicationId = a.ApplicationId
