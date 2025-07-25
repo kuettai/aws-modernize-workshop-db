@@ -39,9 +39,11 @@ VALUES
 DECLARE @i INT = 11;
 WHILE @i <= 50
 BEGIN
-    INSERT INTO Branches (BranchCode, BranchName, Address, City, State, ZipCode, Phone, Email, IsActive)
-    VALUES (
-        'BR' + FORMAT(@i, '000'),
+    IF NOT EXISTS (SELECT 1 FROM Branches WHERE BranchCode = 'BR' + FORMAT(@i, '000'))
+    BEGIN
+        INSERT INTO Branches (BranchCode, BranchName, Address, City, State, ZipCode, Phone, Email, IsActive)
+        VALUES (
+            'BR' + FORMAT(@i, '000'),
         'Branch ' + CAST(@i AS NVARCHAR),
         CAST(@i * 100 AS NVARCHAR) + ' Main Street',
         CASE (@i % 10)
@@ -60,7 +62,8 @@ BEGIN
         FORMAT(@i * 100 + 5550000, '000-000-0000'),
         'branch' + CAST(@i AS NVARCHAR) + '@loanapp.com',
         1
-    );
+        );
+    END
     SET @i = @i + 1;
 END
 
@@ -81,9 +84,11 @@ INSERT INTO @LastNames VALUES ('Smith'),('Johnson'),('Williams'),('Brown'),('Jon
 DECLARE @LoanOfficerCount INT = 1;
 WHILE @LoanOfficerCount <= 200
 BEGIN
-    INSERT INTO LoanOfficers (EmployeeId, FirstName, LastName, Email, Phone, BranchId, IsActive, HireDate)
-    SELECT 
-        'LO' + FORMAT(@LoanOfficerCount, '000'),
+    IF NOT EXISTS (SELECT 1 FROM LoanOfficers WHERE EmployeeId = 'LO' + FORMAT(@LoanOfficerCount, '000'))
+    BEGIN
+        INSERT INTO LoanOfficers (EmployeeId, FirstName, LastName, Email, Phone, BranchId, IsActive, HireDate)
+        SELECT 
+            'LO' + FORMAT(@LoanOfficerCount, '000'),
         (SELECT TOP 1 Name FROM @FirstNames ORDER BY NEWID()),
         (SELECT TOP 1 Name FROM @LastNames ORDER BY NEWID()),
         'lo' + CAST(@LoanOfficerCount AS NVARCHAR) + '@loanapp.com',
@@ -91,6 +96,7 @@ BEGIN
         ((@LoanOfficerCount - 1) % 50) + 1, -- Distribute across branches
         1,
         DATEADD(DAY, -CAST(RAND() * 1825 AS INT), GETDATE()) -- Random hire date within 5 years
+    END
     SET @LoanOfficerCount = @LoanOfficerCount + 1;
 END
 
@@ -102,12 +108,15 @@ PRINT 'Generating Customers...';
 DECLARE @CustomerCount INT = 1;
 WHILE @CustomerCount <= 1000
 BEGIN
-    INSERT INTO Customers (
-        CustomerNumber, FirstName, LastName, DateOfBirth, SSN, Email, Phone,
-        Address, City, State, ZipCode, MonthlyIncome, EmploymentStatus, EmployerName, YearsEmployed, IsActive
-    )
-    SELECT 
-        'CUST' + FORMAT(YEAR(GETDATE()), '0000') + FORMAT(@CustomerCount, '000000'),
+    DECLARE @CustomerNumber NVARCHAR(50) = 'CUST' + FORMAT(YEAR(GETDATE()), '0000') + FORMAT(@CustomerCount, '000000');
+    IF NOT EXISTS (SELECT 1 FROM Customers WHERE CustomerNumber = @CustomerNumber)
+    BEGIN
+        INSERT INTO Customers (
+            CustomerNumber, FirstName, LastName, DateOfBirth, SSN, Email, Phone,
+            Address, City, State, ZipCode, MonthlyIncome, EmploymentStatus, EmployerName, YearsEmployed, IsActive
+        )
+        SELECT 
+            @CustomerNumber,
         (SELECT TOP 1 Name FROM @FirstNames ORDER BY NEWID()),
         (SELECT TOP 1 Name FROM @LastNames ORDER BY NEWID()),
         DATEADD(YEAR, -CAST(RAND() * 50 + 18 AS INT), GETDATE()), -- Age 18-68
@@ -147,7 +156,7 @@ BEGIN
         END,
         CAST(RAND() * 20 AS INT), -- 0-20 years employment
         1;
-    
+    END
     SET @CustomerCount = @CustomerCount + 1;
 END
 
