@@ -210,12 +210,13 @@ CREATE DATABASE LoanApplicationDB;
     $dbTest = Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -Query "SELECT COUNT(*) as Count FROM Applications"
     Write-Host "Database: $($dbTest.Count) applications" -ForegroundColor Green
     
-    # Test endpoints
+    # Test endpoints including documentation
     $endpoints = @(
         "http://localhost",
         "http://localhost/api/applications/count",
         "http://localhost/api/customers/count",
-        "http://localhost/api/applications"
+        "http://localhost/api/applications",
+        "http://localhost/docs"
     )
     
     foreach ($endpoint in $endpoints) {
@@ -240,6 +241,7 @@ Access Information:
 - Homepage: http://localhost
 - Applications API: http://localhost/api/applications
 - Customers API: http://localhost/api/customers
+- Documentation: http://localhost/docs
 
 Database:
 - Server: localhost

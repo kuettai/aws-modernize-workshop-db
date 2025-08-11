@@ -237,6 +237,7 @@ Available Endpoints:
 - Home: http://localhost
 - Applications API: http://localhost/api/applications
 - Customers API: http://localhost/api/customers
+- Documentation: http://localhost/docs
 
 Workshop Phases Ready:
 ✅ Phase 1: SQL Server → AWS RDS SQL Server
