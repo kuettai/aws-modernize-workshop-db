@@ -304,8 +304,155 @@ ALTER TABLE Customers ADD FullName AS (FirstName + ' ' + LastName);
 -- Add computed column for loan age in days
 ALTER TABLE Loans ADD LoanAgeDays AS (DATEDIFF(DAY, DisbursementDate, GETDATE()));
 
+-- =============================================
+-- BATCH REPORTING TABLES
+-- =============================================
+
+-- =============================================
+-- Table 11: Daily Application Summary Results
+-- =============================================
+CREATE TABLE DailyApplicationSummary (
+    SummaryId INT IDENTITY(1,1) PRIMARY KEY,
+    ReportDate DATE NOT NULL,
+    TotalApplications INT NOT NULL,
+    ApprovedApplications INT NOT NULL,
+    RejectedApplications INT NOT NULL,
+    PendingApplications INT NOT NULL,
+    ApprovalRate DECIMAL(5,2) NOT NULL,
+    TotalRequestedAmount DECIMAL(15,2) NOT NULL,
+    AvgRequestedAmount DECIMAL(12,2) NOT NULL,
+    AvgProcessingHours DECIMAL(8,2),
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT UK_DailyApplicationSummary_ReportDate UNIQUE (ReportDate)
+);
+
+-- =============================================
+-- Table 12: Monthly Loan Officer Performance Results
+-- =============================================
+CREATE TABLE MonthlyLoanOfficerPerformance (
+    PerformanceId INT IDENTITY(1,1) PRIMARY KEY,
+    ReportMonth DATE NOT NULL, -- First day of month
+    LoanOfficerId INT NOT NULL,
+    LoanOfficerName NVARCHAR(101) NOT NULL,
+    BranchName NVARCHAR(100) NOT NULL,
+    TotalApplications INT NOT NULL,
+    ApprovedApplications INT NOT NULL,
+    ApprovalRate DECIMAL(5,2) NOT NULL,
+    TotalLoanAmount DECIMAL(15,2) NOT NULL,
+    AvgLoanAmount DECIMAL(12,2) NOT NULL,
+    AvgProcessingDays DECIMAL(6,2),
+    Ranking INT,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT FK_MonthlyLoanOfficerPerformance_LoanOfficer FOREIGN KEY (LoanOfficerId) REFERENCES LoanOfficers(LoanOfficerId),
+    CONSTRAINT UK_MonthlyLoanOfficerPerformance_Month_Officer UNIQUE (ReportMonth, LoanOfficerId)
+);
+
+-- =============================================
+-- Table 13: Weekly Customer Analytics Results
+-- =============================================
+CREATE TABLE WeeklyCustomerAnalytics (
+    AnalyticsId INT IDENTITY(1,1) PRIMARY KEY,
+    ReportWeek DATE NOT NULL, -- Monday of the week
+    CustomerSegment NVARCHAR(50) NOT NULL,
+    CustomerCount INT NOT NULL,
+    TotalApplications INT NOT NULL,
+    ApprovalRate DECIMAL(5,2) NOT NULL,
+    AvgCreditScore INT,
+    AvgMonthlyIncome DECIMAL(12,2),
+    AvgLoanAmount DECIMAL(12,2),
+    TotalPaymentsMade DECIMAL(15,2),
+    AvgPaymentAmount DECIMAL(10,2),
+    DefaultRate DECIMAL(5,2),
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT UK_WeeklyCustomerAnalytics_Week_Segment UNIQUE (ReportWeek, CustomerSegment)
+);
+
+-- =============================================
+-- Table 14: Daily Branch Performance Results
+-- =============================================
+CREATE TABLE DailyBranchPerformance (
+    PerformanceId INT IDENTITY(1,1) PRIMARY KEY,
+    ReportDate DATE NOT NULL,
+    BranchId INT NOT NULL,
+    BranchCode NVARCHAR(10) NOT NULL,
+    BranchName NVARCHAR(100) NOT NULL,
+    TotalApplications INT NOT NULL,
+    ApprovedApplications INT NOT NULL,
+    ApprovalRate DECIMAL(5,2) NOT NULL,
+    TotalRequestedAmount DECIMAL(15,2) NOT NULL,
+    AvgProcessingHours DECIMAL(8,2),
+    ActiveLoanOfficers INT NOT NULL,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT FK_DailyBranchPerformance_Branch FOREIGN KEY (BranchId) REFERENCES Branches(BranchId),
+    CONSTRAINT UK_DailyBranchPerformance_Date_Branch UNIQUE (ReportDate, BranchId)
+);
+
+-- =============================================
+-- Table 15: Monthly Risk Analysis Results
+-- =============================================
+CREATE TABLE MonthlyRiskAnalysis (
+    RiskAnalysisId INT IDENTITY(1,1) PRIMARY KEY,
+    ReportMonth DATE NOT NULL, -- First day of month
+    CreditScoreRange NVARCHAR(30) NOT NULL,
+    TotalApplications INT NOT NULL,
+    ApprovedApplications INT NOT NULL,
+    ApprovalRate DECIMAL(5,2) NOT NULL,
+    AvgDSRRatio DECIMAL(5,2),
+    AvgLoanAmount DECIMAL(12,2),
+    DefaultRate DECIMAL(5,2),
+    TotalLossAmount DECIMAL(15,2),
+    RiskScore DECIMAL(5,2),
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT UK_MonthlyRiskAnalysis_Month_Range UNIQUE (ReportMonth, CreditScoreRange)
+);
+
+-- =============================================
+-- Table 16: Batch Job Execution Log
+-- =============================================
+CREATE TABLE BatchJobExecutionLog (
+    ExecutionId BIGINT IDENTITY(1,1) PRIMARY KEY,
+    JobName NVARCHAR(100) NOT NULL,
+    StartTime DATETIME2 NOT NULL,
+    EndTime DATETIME2,
+    Status NVARCHAR(20) NOT NULL CHECK (Status IN ('Running', 'Completed', 'Failed', 'Cancelled')),
+    RecordsProcessed INT,
+    ErrorMessage NVARCHAR(MAX),
+    DurationSeconds AS (DATEDIFF(SECOND, StartTime, EndTime)),
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+
+-- =============================================
+-- REPORTING INDEXES FOR PERFORMANCE
+-- =============================================
+
+-- Daily Application Summary indexes
+CREATE INDEX IX_DailyApplicationSummary_ReportDate ON DailyApplicationSummary(ReportDate);
+CREATE INDEX IX_DailyApplicationSummary_ApprovalRate ON DailyApplicationSummary(ApprovalRate);
+
+-- Monthly Loan Officer Performance indexes
+CREATE INDEX IX_MonthlyLoanOfficerPerformance_ReportMonth ON MonthlyLoanOfficerPerformance(ReportMonth);
+CREATE INDEX IX_MonthlyLoanOfficerPerformance_Ranking ON MonthlyLoanOfficerPerformance(Ranking);
+CREATE INDEX IX_MonthlyLoanOfficerPerformance_ApprovalRate ON MonthlyLoanOfficerPerformance(ApprovalRate);
+
+-- Weekly Customer Analytics indexes
+CREATE INDEX IX_WeeklyCustomerAnalytics_ReportWeek ON WeeklyCustomerAnalytics(ReportWeek);
+CREATE INDEX IX_WeeklyCustomerAnalytics_Segment ON WeeklyCustomerAnalytics(CustomerSegment);
+
+-- Daily Branch Performance indexes
+CREATE INDEX IX_DailyBranchPerformance_ReportDate ON DailyBranchPerformance(ReportDate);
+CREATE INDEX IX_DailyBranchPerformance_BranchId ON DailyBranchPerformance(BranchId);
+
+-- Monthly Risk Analysis indexes
+CREATE INDEX IX_MonthlyRiskAnalysis_ReportMonth ON MonthlyRiskAnalysis(ReportMonth);
+CREATE INDEX IX_MonthlyRiskAnalysis_CreditScoreRange ON MonthlyRiskAnalysis(CreditScoreRange);
+
+-- Batch Job Execution Log indexes
+CREATE INDEX IX_BatchJobExecutionLog_JobName ON BatchJobExecutionLog(JobName);
+CREATE INDEX IX_BatchJobExecutionLog_StartTime ON BatchJobExecutionLog(StartTime);
+CREATE INDEX IX_BatchJobExecutionLog_Status ON BatchJobExecutionLog(Status);
+
 PRINT 'Database schema created successfully!';
-PRINT 'Total Tables: 10';
-PRINT 'Total Indexes: 20+';
+PRINT 'Total Tables: 16 (10 core + 6 reporting)';
+PRINT 'Total Indexes: 30+';
 PRINT 'Ready for stored procedures and sample data generation.';
 GO

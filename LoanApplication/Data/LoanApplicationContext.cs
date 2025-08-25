@@ -19,6 +19,12 @@ namespace LoanApplication.Data
         public DbSet<CreditCheck> CreditChecks { get; set; }
         public DbSet<IntegrationLog> IntegrationLogs { get; set; }
 
+    // Reporting Tables
+    public DbSet<DailyApplicationSummary> DailyApplicationSummaries { get; set; }
+    public DbSet<MonthlyLoanOfficerPerformance> MonthlyLoanOfficerPerformances { get; set; }
+    public DbSet<WeeklyCustomerAnalytics> WeeklyCustomerAnalytics { get; set; }
+    public DbSet<BatchJobExecutionLog> BatchJobExecutionLogs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Branch configuration

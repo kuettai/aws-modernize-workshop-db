@@ -13,13 +13,13 @@ Transform a legacy .NET loan application through a **3-phase modernization journ
 
 **Phase 1**: SQL Server → AWS RDS (Lift & Shift)  
 **Phase 2**: RDS SQL Server → Aurora PostgreSQL (Engine Modernization)  
-**Phase 3**: PostgreSQL + DynamoDB (Hybrid NoSQL Integration)
+**Phase 3**: PostgreSQL + DynamoDB (Hybrid Architecture - Logs to NoSQL)
 
-### Key Results Achieved
-- **98% cost reduction** for high-volume logging workloads
-- **70% performance improvement** for time-series queries  
+### Key Results Demonstrated
+- **Up to 98% cost reduction** for high-volume logging workloads (DynamoDB vs PostgreSQL)
+- **Up to 70% performance improvement** for time-series log queries with optimized NoSQL design
 - **Zero data loss** throughout all migration phases
-- **Production-ready** hybrid cloud architecture
+- **Production-ready** hybrid cloud architecture patterns
 
 ## 🚀 What You'll Learn
 
@@ -139,9 +139,24 @@ dotnet run
 ### Performance Results
 | Metric | Baseline | Phase 1 | Phase 2 | Phase 3 |
 |--------|----------|---------|---------|---------|
-| **Monthly Cost** | $1,000 | $950 | $800 | $200 |
-| **Query Response** | 150ms | 145ms | 120ms | 45ms (logs) |
-| **Scalability** | Limited | Enhanced | Optimized | Unlimited |
+| **Infrastructure Cost** | $500 | $1,000 | $800 | $650 |
+| **Query Response** | 150ms | 145ms | 120ms | 120ms (business) / 45ms (logs) |
+| **Scalability** | Limited | Enhanced | Optimized | Hybrid Optimized |
+
+### Total Cost of Ownership (TCO) Analysis
+| Cost Component | Baseline | Phase 1 | Phase 2 | Phase 3 |
+|----------------|----------|---------|---------|---------|
+| **Infrastructure** | $500 | $1,000 | $800 | $650 |
+| **DBA/Operations** | $2,000 | $500 | $400 | $350 |
+| **Licensing** | $300 | $0 | $0 | $0 |
+| **Backup/DR** | $200 | $0 | $0 | $0 |
+| **Monitoring** | $100 | $0 | $0 | $0 |
+| **Monthly TCO** | **$3,100** | **$1,500** | **$1,200** | **$1,000** |
+| **Annual Savings** | Baseline | $19,200 | $22,800 | $25,200 |
+
+*TCO includes infrastructure, operational overhead, licensing, backup/DR, and monitoring costs*
+
+**Note: These are typical benchmark figures for demonstration purposes, not actual costs**
 
 ## 🛠️ Key Features
 
@@ -165,7 +180,7 @@ dotnet run
 - **Service Layer Abstraction** for seamless integration
 - **Batch Migration Tools** with resume capability
 - **Real-Time Monitoring** dashboard
-- **Cost Optimization** achieving 98% reduction
+- **Cost Optimization** demonstrating significant reduction potential
 
 ## 📚 Additional Resources
 
@@ -191,7 +206,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Upon completion, participants will have:
 - ✅ **Migrated a complete application** through 3 database platforms
 - ✅ **Mastered AI-assisted development** with Amazon Q Developer  
-- ✅ **Implemented hybrid cloud architecture** with 98% cost savings
+- ✅ **Implemented hybrid cloud architecture** with demonstrated cost optimization patterns
 - ✅ **Applied AWS best practices** for database modernization
 - ✅ **Gained hands-on experience** with real-world migration challenges
 

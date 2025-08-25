@@ -520,6 +520,7 @@ aws configure set aws_secret_access_key YOUR_SECRET_KEY
 
 #### Phase 3: DynamoDB Integration Prompts
 ```
+# IntegrationLogs Migration
 1. "Analyze my PostgreSQL IntegrationLogs table access patterns and design an optimal DynamoDB table structure with proper partition/sort keys."
 
 2. "Create a C# repository class for DynamoDB logging using AWS SDK v3. Include batch operations, error handling, and retry logic."
@@ -534,15 +535,32 @@ aws configure set aws_secret_access_key YOUR_SECRET_KEY
 
 7. "Implement a dual-write logging pattern that writes to both PostgreSQL and DynamoDB during migration transition period."
 
-8. "Generate CloudWatch monitoring setup for DynamoDB logging including performance metrics, cost alerts, and error tracking."
+# Payments Migration (Enhanced Phase 3)
+8. "Analyze this Payments table structure and access patterns to design optimal DynamoDB table with partition key CustomerId and sort key PaymentDate#PaymentId."
 
-9. "Create comprehensive validation scripts to verify data integrity and performance after PostgreSQL to DynamoDB migration."
+9. "Create DynamoDB GSI strategy for payment queries: payment status monitoring, loan payment tracking, payment method analysis, and date range searches."
 
-10. "Design a DynamoDB backup and archival strategy for long-term log retention with cost optimization."
+10. "Generate C# PaymentsRepository for DynamoDB with operations: InsertPayment, GetCustomerPayments, GetPaymentsByStatus, GetLoanPayments, UpdatePaymentStatus."
 
-11. "Implement DynamoDB batch write operations with proper error handling for high-throughput logging scenarios."
+11. "Design dual-write pattern for Payments migration that writes to both PostgreSQL and DynamoDB during transition period with consistency validation."
 
-12. "Create a DynamoDB query optimization strategy for time-series log data with efficient GSI usage."
+12. "Create comprehensive payment data migration script from PostgreSQL to DynamoDB with batch processing, error handling, and progress tracking for 500K+ payment records."
+
+13. "Update PaymentController to use hybrid payment service that abstracts PostgreSQL and DynamoDB access during migration phases."
+
+14. "Generate payment service layer that supports gradual migration: Phase 1 (PostgreSQL only), Phase 2 (dual-write), Phase 3 (DynamoDB only)."
+
+15. "Create payment query optimization strategy for DynamoDB including efficient use of GSIs for customer payment history and payment status monitoring."
+
+16. "Design cost-effective DynamoDB table structure for high-volume payment data with proper throughput settings and cost optimization."
+
+17. "Generate comprehensive validation framework for payment data consistency between PostgreSQL and DynamoDB during migration."
+
+18. "Create CloudWatch monitoring setup for DynamoDB payments including performance metrics, cost alerts, and payment processing error tracking."
+
+19. "Design payment data archival strategy using DynamoDB TTL for old payment records with cost optimization and compliance requirements."
+
+20. "Generate payment performance benchmarking scripts to compare PostgreSQL vs DynamoDB query performance for customer payment history and status queries."
 ```
 
 #### Optimization and Performance Prompts

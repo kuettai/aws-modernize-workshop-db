@@ -1,0 +1,158 @@
+@model ReportingDashboardViewModel
+@{
+    ViewData["Title"] = "Reporting Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="fas fa-chart-dashboard"></i> Reporting Dashboard</h2>
+            <p class="text-muted">Comprehensive view of application performance, loan officer metrics, and customer analytics</p>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-filter"></i> Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="startDate" name="StartDate" 
+                                   value="@Model.Filter.StartDate?.ToString("yyyy-MM-dd")">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="endDate" name="EndDate" 
+                                   value="@Model.Filter.EndDate?.ToString("yyyy-MM-dd")">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="reportType" class="form-label">Report Type</label>
+                            <select class="form-select" id="reportType" name="ReportType">
+                                <option value="">All Reports</option>
+                                <option value="daily" @(Model.Filter.ReportType == "daily" ? "selected" : "")>Daily Summary</option>
+                                <option value="monthly" @(Model.Filter.ReportType == "monthly" ? "selected" : "")>Monthly Performance</option>
+                                <option value="weekly" @(Model.Filter.ReportType == "weekly" ? "selected" : "")>Weekly Analytics</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Apply Filters
+                            </button>
+                            <a href="@Url.Action("Dashboard")" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Clear
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Daily Reports</h6>
+                            <h3>@Model.DailySummaries.Count</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-calendar-day fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Monthly Reports</h6>
+                            <h3>@Model.MonthlyPerformance.Select(x => x.ReportMonth).Distinct().Count()</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-calendar-alt fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Weekly Reports</h6>
+                            <h3>@Model.WeeklyAnalytics.Select(x => x.ReportWeek).Distinct().Count()</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-calendar-week fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Avg Approval Rate</h6>
+                            <h3>@(Model.DailySummaries.Any() ? Model.DailySummaries.Average(x => x.ApprovalRate).ToString("F1") : "0")%</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-percentage fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="@Url.Action("BatchJobMonitor")" class="btn btn-outline-primary btn-lg w-100 mb-2">
+                                <i class="fas fa-tasks"></i><br>
+                                Batch Job Monitor
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="@Url.Action("DailyApplicationSummary")" class="btn btn-outline-success btn-lg w-100 mb-2">
+                                <i class="fas fa-calendar-day"></i><br>
+                                Daily Reports
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="@Url.Action("MonthlyLoanOfficerPerformance")" class="btn btn-outline-info btn-lg w-100 mb-2">
+                                <i class="fas fa-users"></i><br>
+                                Officer Performance
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="@Url.Action("WeeklyCustomerAnalytics")" class="btn btn-outline-warning btn-lg w-100 mb-2">
+                                <i class="fas fa-chart-pie"></i><br>
+                                Customer Analytics
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
