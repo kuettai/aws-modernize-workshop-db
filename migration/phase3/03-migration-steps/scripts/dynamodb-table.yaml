@@ -1,0 +1,149 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'DynamoDB table for IntegrationLogs migration - Phase 3'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: 'dev'
+    AllowedValues: ['dev', 'test', 'prod']
+    Description: 'Environment name for resource naming'
+
+Resources:
+  IntegrationLogsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'LoanApp-IntegrationLogs-${Environment}'
+      BillingMode: PAY_PER_REQUEST  # Start with on-demand for workshop
+      
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+        - AttributeName: GSI2PK
+          AttributeType: S
+        - AttributeName: GSI2SK
+          AttributeType: S
+        - AttributeName: GSI3PK
+          AttributeType: S
+        - AttributeName: GSI3SK
+          AttributeType: S
+      
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1-ApplicationId-LogTimestamp
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        
+        - IndexName: GSI2-CorrelationId-LogTimestamp
+          KeySchema:
+            - AttributeName: GSI2PK
+              KeyType: HASH
+            - AttributeName: GSI2SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        
+        - IndexName: GSI3-ErrorStatus-LogTimestamp
+          KeySchema:
+            - AttributeName: GSI3PK
+              KeyType: HASH
+            - AttributeName: GSI3SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      
+      TimeToLiveSpecification:
+        AttributeName: TTL
+        Enabled: true
+      
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: LoanApplication
+        - Key: Component
+          Value: IntegrationLogs
+        - Key: Workshop
+          Value: DatabaseModernization
+        - Key: Phase
+          Value: Phase3-DynamoDB
+
+  # IAM Role for DynamoDB access
+  DynamoDBAccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'LoanApp-DynamoDB-Role-${Environment}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: LoanApplication
+
+  # Instance Profile for EC2
+  DynamoDBInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub 'LoanApp-DynamoDB-Profile-${Environment}'
+      Roles:
+        - !Ref DynamoDBAccessRole
+
+Outputs:
+  TableName:
+    Description: 'DynamoDB table name for IntegrationLogs'
+    Value: !Ref IntegrationLogsTable
+    Export:
+      Name: !Sub '${AWS::StackName}-TableName'
+  
+  TableArn:
+    Description: 'DynamoDB table ARN'
+    Value: !GetAtt IntegrationLogsTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-TableArn'
+  
+  StreamArn:
+    Description: 'DynamoDB stream ARN'
+    Value: !GetAtt IntegrationLogsTable.StreamArn
+    Export:
+      Name: !Sub '${AWS::StackName}-StreamArn'
+  
+  IAMRoleArn:
+    Description: 'IAM Role ARN for DynamoDB access'
+    Value: !GetAtt DynamoDBAccessRole.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-RoleArn'
+  
+  InstanceProfileArn:
+    Description: 'Instance Profile ARN for EC2'
+    Value: !GetAtt DynamoDBInstanceProfile.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-InstanceProfileArn'
