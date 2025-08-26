@@ -222,7 +222,7 @@ WITH PaymentHistoryAnalysis AS (
     FROM Loans l
     LEFT JOIN Payments p ON l.LoanId = p.LoanId
     INNER JOIN Applications a ON l.ApplicationId = a.ApplicationId
-    WHERE a.CustomerId = @CustomerId
+    WHERE a.CustomerId = @@CustomerId
     GROUP BY a.CustomerId, l.LoanId, l.LoanNumber, l.NextPaymentDate
 )</pre>
                 </div>
