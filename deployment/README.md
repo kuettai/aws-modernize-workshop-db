@@ -86,13 +86,26 @@ Comprehensive documentation including:
 
 ## 🎯 Recommended Deployment Flow
 
-### For Fresh EC2 Instance:
+### For Fresh EC2 Instance (Complete Setup):
 ```powershell
-# Option 1: Direct deployment (if files already on EC2)
-.\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"
+# Step 1: Run prerequisite setup FIRST (as Administrator)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine -Force
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/yourusername/repo/main/deployment/00-prerequisite-setup.ps1" -OutFile "prerequisite-setup.ps1"
+.\prerequisite-setup.ps1
 
-# Option 2: Clone repository first
-.\deployment\quick-git-setup.ps1 -GitRepo "https://github.com/yourusername/repo.git"
+# Step 2: Clone your workshop repository
+cd C:\Workshop
+git clone https://github.com/yourusername/your-repo.git .
+
+# Step 3: Run main deployment
+.\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"
+```
+
+### Alternative (Manual Steps):
+```powershell
+# If you already have the files locally:
+.\deployment\00-prerequisite-setup.ps1
+# Then copy workshop files to C:\Workshop
 .\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"
 ```
 
