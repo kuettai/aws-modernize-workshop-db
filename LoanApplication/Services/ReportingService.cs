@@ -38,7 +38,8 @@ namespace LoanApplication.Services
 
         public async Task<DailyApplicationSummary?> GetDailyApplicationSummaryAsync(DateTime reportDate)
         {
-            return await _context.Set<DailyApplicationSummary>()
+            using var context = _contextFactory.CreateReadContext();
+            return await context.Set<DailyApplicationSummary>()
                 .FirstOrDefaultAsync(x => x.ReportDate.Date == reportDate.Date);
         }
 
@@ -61,7 +62,8 @@ namespace LoanApplication.Services
 
         public async Task<List<MonthlyLoanOfficerPerformance>> GetTopPerformingOfficersAsync(DateTime reportMonth, int topCount = 10)
         {
-            return await _context.Set<MonthlyLoanOfficerPerformance>()
+            using var context = _contextFactory.CreateReadContext();
+            return await context.Set<MonthlyLoanOfficerPerformance>()
                 .Where(x => x.ReportMonth.Year == reportMonth.Year && x.ReportMonth.Month == reportMonth.Month)
                 .OrderBy(x => x.Ranking)
                 .Take(topCount)
@@ -87,7 +89,8 @@ namespace LoanApplication.Services
 
         public async Task<List<WeeklyCustomerAnalytics>> GetCustomerAnalyticsBySegmentAsync(string segment, DateTime? startWeek = null, DateTime? endWeek = null)
         {
-            var query = _context.Set<WeeklyCustomerAnalytics>()
+            using var context = _contextFactory.CreateReadContext();
+            var query = context.Set<WeeklyCustomerAnalytics>()
                 .Where(x => x.CustomerSegment == segment);
 
             if (startWeek.HasValue)
@@ -149,7 +152,8 @@ namespace LoanApplication.Services
             }
 
             // Fetch from database
-            var statuses = await _context.Set<BatchJobExecutionLog>()
+            using var context = _contextFactory.CreateReadContext();
+            var statuses = await context.Set<BatchJobExecutionLog>()
                 .Select(x => x.Status)
                 .Distinct()
                 .OrderBy(x => x)
@@ -163,9 +167,10 @@ namespace LoanApplication.Services
 
         public async Task<Dictionary<string, object>> GetBatchJobSummaryAsync(int daysBack = 7)
         {
+            using var context = _contextFactory.CreateReadContext();
             var cutoffDate = DateTime.Now.AddDays(-daysBack);
             
-            var summary = await _context.Set<BatchJobExecutionLog>()
+            var summary = await context.Set<BatchJobExecutionLog>()
                 .Where(x => x.StartTime >= cutoffDate)
                 .GroupBy(x => 1)
                 .Select(g => new
