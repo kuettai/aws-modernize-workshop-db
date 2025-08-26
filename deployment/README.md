@@ -13,6 +13,7 @@ Complete workshop environment setup for fresh EC2 instances.
 - Configures IIS and security settings
 - **Usage**: `.\simple-deployment.ps1 -SQLPassword "WorkshopDB123!"`
 - **Skip Database**: `.\simple-deployment.ps1 -SkipDatabase` (rebuild app only)
+- **App Only**: `.\simple-deployment.ps1 -AppOnly` (skip all setup, app rebuild only)
 
 #### `00-prerequisite-setup.ps1` - **PowerShell Policy Only**
 Sets PowerShell execution policy only (rarely needed).
@@ -58,6 +59,12 @@ Generates realistic test data:
 ```powershell
 # Skip database deployment, rebuild app only
 .\deployment\simple-deployment.ps1 -SkipDatabase
+```
+
+### For Quick App Deployment (Everything Already Setup):
+```powershell
+# Skip all setup (SQL, IIS, prerequisites), app rebuild only
+.\deployment\simple-deployment.ps1 -AppOnly
 ```
 
 ### If PowerShell Policy Issues:

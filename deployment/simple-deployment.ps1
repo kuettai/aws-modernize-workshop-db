@@ -1,73 +1,83 @@
 param(
     [string]$SQLPassword = "WorkshopDB123!",
     [string]$GitRepo = "https://github.com/kuettai/aws-modernize-workshop-db.git",
-    [switch]$SkipDatabase
+    [switch]$SkipDatabase,
+    [switch]$AppOnly
 )
 
 Write-Host "=== Workshop Deployment ===" -ForegroundColor Cyan
 
 try {
-    # 1. Setup SQL Server
-    Write-Host "Step 1: Configuring SQL Server..." -ForegroundColor Yellow
-    
-    $sqlCmd = "USE master; ALTER LOGIN sa ENABLE; ALTER LOGIN sa WITH PASSWORD = '$SQLPassword'; EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'LoginMode', REG_DWORD, 2;"
-    Invoke-Sqlcmd -ServerInstance "localhost" -Query $sqlCmd
-    Restart-Service -Name "MSSQLSERVER" -Force
-    Start-Sleep -Seconds 15
-    
-    Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Query "SELECT @@VERSION" -QueryTimeout 10
-    Write-Host "SQL Server configured" -ForegroundColor Green
-    
-    # 2. Install Prerequisites
-    Write-Host "Step 2: Installing prerequisites..." -ForegroundColor Yellow
-    
-    if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-        Set-ExecutionPolicy Bypass -Scope Process -Force
-        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    if (-not $AppOnly) {
+        # 1. Setup SQL Server
+        Write-Host "Step 1: Configuring SQL Server..." -ForegroundColor Yellow
+        
+        $sqlCmd = "USE master; ALTER LOGIN sa ENABLE; ALTER LOGIN sa WITH PASSWORD = '$SQLPassword'; EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'LoginMode', REG_DWORD, 2;"
+        Invoke-Sqlcmd -ServerInstance "localhost" -Query $sqlCmd
+        Restart-Service -Name "MSSQLSERVER" -Force
+        Start-Sleep -Seconds 15
+        
+        Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Query "SELECT @@VERSION" -QueryTimeout 10
+        Write-Host "SQL Server configured" -ForegroundColor Green
+        
+        # 2. Install Prerequisites
+        Write-Host "Step 2: Installing prerequisites..." -ForegroundColor Yellow
+        
+        if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+            Set-ExecutionPolicy Bypass -Scope Process -Force
+            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+            Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+            $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+        }
+        
+        Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole -All -NoRestart
+        Enable-WindowsOptionalFeature -Online -FeatureName IIS-ASPNET45 -All -NoRestart
+        Enable-WindowsOptionalFeature -Online -FeatureName IIS-StaticContent -All -NoRestart
+        
+        choco install git dotnet-9.0-sdk dotnet-9.0-windowshosting -y
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+        
+        Write-Host "Prerequisites installed" -ForegroundColor Green
+    } else {
+        Write-Host "AppOnly mode: Skipping SQL Server and prerequisites setup" -ForegroundColor Yellow
     }
-    
-    Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole -All -NoRestart
-    Enable-WindowsOptionalFeature -Online -FeatureName IIS-ASPNET45 -All -NoRestart
-    Enable-WindowsOptionalFeature -Online -FeatureName IIS-StaticContent -All -NoRestart
-    
-    choco install git dotnet-9.0-sdk dotnet-9.0-windowshosting -y
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-    
-    Write-Host "Prerequisites installed" -ForegroundColor Green
     
     # 3. Clone Repository
-    Write-Host "Step 3: Cloning repository..." -ForegroundColor Yellow
-    
-    # Ensure we're in C:\Workshop
-    Set-Location "C:\Workshop"
-    
-    if ($GitRepo -ne "local") {
-        try {
-            git clone $GitRepo
-            Set-Location "C:\Workshop\aws-modernize-workshop-db"
-            Write-Host "Repository cloned successfully" -ForegroundColor Green
-        } catch {
-            Write-Host "Git clone failed, assuming local files" -ForegroundColor Yellow
+    if (-not $AppOnly) {
+        Write-Host "Step 3: Cloning repository..." -ForegroundColor Yellow
+        
+        # Ensure we're in C:\Workshop
+        Set-Location "C:\Workshop"
+        
+        if ($GitRepo -ne "local") {
+            try {
+                git clone $GitRepo
+                Set-Location "C:\Workshop\aws-modernize-workshop-db"
+                Write-Host "Repository cloned successfully" -ForegroundColor Green
+            } catch {
+                Write-Host "Git clone failed, assuming local files" -ForegroundColor Yellow
+            }
+        } else {
+            Write-Host "Using local files" -ForegroundColor Green
+        }
+        
+        # Verify files exist
+        Write-Host "Checking for required files..." -ForegroundColor Cyan
+        $requiredFiles = @("database-schema.sql", "LoanApplication")
+        foreach ($file in $requiredFiles) {
+            if (Test-Path $file) {
+                Write-Host "  Found: $file" -ForegroundColor Green
+            } else {
+                Write-Host "  Missing: $file" -ForegroundColor Red
+            }
         }
     } else {
-        Write-Host "Using local files" -ForegroundColor Green
-    }
-    
-    # Verify files exist
-    Write-Host "Checking for required files..." -ForegroundColor Cyan
-    $requiredFiles = @("database-schema.sql", "LoanApplication")
-    foreach ($file in $requiredFiles) {
-        if (Test-Path $file) {
-            Write-Host "  Found: $file" -ForegroundColor Green
-        } else {
-            Write-Host "  Missing: $file" -ForegroundColor Red
-        }
+        Write-Host "Step 3: AppOnly mode - using existing repository" -ForegroundColor Yellow
+        Set-Location "C:\Workshop\aws-modernize-workshop-db"
     }
     
     # 4. Deploy Database
-    if (-not $SkipDatabase) {
+    if (-not $SkipDatabase -and -not $AppOnly) {
         Write-Host "Step 4: Deploying database..." -ForegroundColor Yellow
         
         $clearDb = "USE master; DROP DATABASE IF EXISTS LoanApplicationDB; CREATE DATABASE LoanApplicationDB;"
@@ -105,7 +115,11 @@ try {
             Write-Host "  WARNING: sample-data-generation.sql not found - database will be empty" -ForegroundColor Yellow
         }
     } else {
-        Write-Host "Step 4: Skipping database deployment (SkipDatabase flag set)" -ForegroundColor Yellow
+        if ($SkipDatabase) {
+            Write-Host "Step 4: Skipping database deployment (SkipDatabase flag set)" -ForegroundColor Yellow
+        } elseif ($AppOnly) {
+            Write-Host "Step 4: Skipping database deployment (AppOnly mode)" -ForegroundColor Yellow
+        }
     }
     
     # 5. Build Application
