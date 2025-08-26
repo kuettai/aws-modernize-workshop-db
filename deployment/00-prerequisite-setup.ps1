@@ -23,7 +23,7 @@ try {
 
 NEXT STEP:
 Run the complete deployment script:
-.\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"
+.\deployment\simple-deployment.ps1 -SQLPassword "WorkshopDB123!"
 
 This will handle all prerequisites, database, and application deployment.
 

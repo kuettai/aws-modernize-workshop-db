@@ -21,7 +21,7 @@ Open **PowerShell as Administrator** and run:
 ```powershell
 # Download and run prerequisite setup
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine -Force
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/yourusername/your-repo/main/deployment/00-prerequisite-setup.ps1" -OutFile "prerequisite-setup.ps1"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/kuettai/aws-modernize-workshop-db/main/deployment/00-prerequisite-setup.ps1" -OutFile "prerequisite-setup.ps1"
 .\prerequisite-setup.ps1
 ```
 
@@ -38,15 +38,16 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/yourusername/your-repo
 # Navigate to workshop directory
 cd C:\Workshop
 
-# Clone your repository (replace with your actual repo URL)
-git clone https://github.com/yourusername/aws-database-modernization-workshop.git .
+# Clone the workshop repository
+git clone https://github.com/kuettai/aws-modernize-workshop-db.git
+cd aws-modernize-workshop-db
 ```
 
 ### **Step 5: Run Complete Deployment**
 
 ```powershell
 # Deploy the complete workshop environment (handles everything)
-.\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"
+.\deployment\simple-deployment.ps1 -SQLPassword "WorkshopDB123!"
 ```
 
 **What this does:**
@@ -83,7 +84,7 @@ After deployment completes, test these URLs:
 # (via RDP file transfer or USB)
 
 # Step 3: Run deployment with local files
-.\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!" -GitRepo "local"
+.\deployment\simple-deployment.ps1 -SQLPassword "WorkshopDB123!" -GitRepo "local"
 ```
 
 ## 🔧 **Troubleshooting**
