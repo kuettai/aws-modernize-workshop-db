@@ -71,37 +71,52 @@ try {
     Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Query $clearDb -ErrorAction SilentlyContinue
     
     if (Test-Path "database-schema.sql") {
+        Write-Host "  Creating database schema..." -ForegroundColor Cyan
         Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -InputFile "database-schema.sql"
-        Write-Host "Database schema created" -ForegroundColor Green
+        Write-Host "  Database schema created" -ForegroundColor Green
+    } else {
+        Write-Host "  WARNING: database-schema.sql not found - skipping schema creation" -ForegroundColor Yellow
     }
     
     if (Test-Path "stored-procedures-simple.sql") {
+        Write-Host "  Creating simple stored procedures..." -ForegroundColor Cyan
         Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "stored-procedures-simple.sql"
-        Write-Host "Simple procedures created" -ForegroundColor Green
+        Write-Host "  Simple procedures created" -ForegroundColor Green
+    } else {
+        Write-Host "  WARNING: stored-procedures-simple.sql not found - skipping" -ForegroundColor Yellow
     }
     
     if (Test-Path "stored-procedure-complex.sql") {
+        Write-Host "  Creating complex stored procedure..." -ForegroundColor Cyan
         Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "stored-procedure-complex.sql"
-        Write-Host "Complex procedure created" -ForegroundColor Green
+        Write-Host "  Complex procedure created" -ForegroundColor Green
+    } else {
+        Write-Host "  WARNING: stored-procedure-complex.sql not found - skipping" -ForegroundColor Yellow
     }
     
     if (Test-Path "sample-data-generation.sql") {
-        Write-Host "Generating sample data (this may take 10-15 minutes)..." -ForegroundColor Yellow
+        Write-Host "  Generating sample data (this may take 10-15 minutes)..." -ForegroundColor Yellow
         Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "sample-data-generation.sql" -QueryTimeout 1800
-        Write-Host "Sample data generated" -ForegroundColor Green
+        Write-Host "  Sample data generated" -ForegroundColor Green
+    } else {
+        Write-Host "  WARNING: sample-data-generation.sql not found - database will be empty" -ForegroundColor Yellow
     }
     
     # 5. Build Application
     Write-Host "Step 5: Building application..." -ForegroundColor Yellow
     
     if (Test-Path "LoanApplication") {
+        Write-Host "  Building .NET application..." -ForegroundColor Cyan
         cd LoanApplication
         dotnet clean
         dotnet restore
         dotnet build --configuration Release
         dotnet publish --configuration Release --output "..\publish" --self-contained false
         cd ..
-        Write-Host "Application built" -ForegroundColor Green
+        Write-Host "  Application built successfully" -ForegroundColor Green
+    } else {
+        Write-Host "  ERROR: LoanApplication folder not found - cannot build application" -ForegroundColor Red
+        throw "LoanApplication folder is required but not found"
     }
     
     # 6. Deploy to IIS
@@ -116,7 +131,12 @@ try {
     New-Item -Path "C:\inetpub\wwwroot\LoanApplication" -ItemType Directory -Force
     
     if (Test-Path "publish") {
+        Write-Host "  Copying application files to IIS..." -ForegroundColor Cyan
         Copy-Item -Path "publish\*" -Destination "C:\inetpub\wwwroot\LoanApplication\" -Recurse -Force
+        Write-Host "  Application files copied" -ForegroundColor Green
+    } else {
+        Write-Host "  ERROR: publish folder not found - application build may have failed" -ForegroundColor Red
+        throw "Published application files not found"
     }
     
     # Create appsettings.json
