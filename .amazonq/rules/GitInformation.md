@@ -1,2 +1,2 @@
-Always run `git add .`, `git commit -m "Initial Test`, `git push` after each run
+Always run `git add .`, `git commit -m "Initial Test`, `git push` after all the changes you made in each interaction
 By any chance you require to output repo information, instead of using "youruser" and "yourrepo", the user should be "kuettai", the repo should be "aws-modernize-workshop-db"

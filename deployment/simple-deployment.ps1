@@ -1,5 +1,6 @@
 param(
-    [string]$SQLPassword = "WorkshopDB123!"
+    [string]$SQLPassword = "WorkshopDB123!",
+    [string]$GitRepo = "https://github.com/kuettai/aws-modernize-workshop-db.git"
 )
 
 Write-Host "=== Workshop Deployment ===" -ForegroundColor Cyan
@@ -35,8 +36,36 @@ try {
     
     Write-Host "Prerequisites installed" -ForegroundColor Green
     
-    # 3. Deploy Database
-    Write-Host "Step 3: Deploying database..." -ForegroundColor Yellow
+    # 3. Clone Repository
+    Write-Host "Step 3: Cloning repository..." -ForegroundColor Yellow
+    
+    # Ensure we're in C:\Workshop
+    Set-Location "C:\Workshop"
+    
+    if ($GitRepo -ne "local") {
+        try {
+            git clone $GitRepo .
+            Write-Host "Repository cloned successfully" -ForegroundColor Green
+        } catch {
+            Write-Host "Git clone failed, assuming local files" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "Using local files" -ForegroundColor Green
+    }
+    
+    # Verify files exist
+    Write-Host "Checking for required files..." -ForegroundColor Cyan
+    $requiredFiles = @("database-schema.sql", "LoanApplication")
+    foreach ($file in $requiredFiles) {
+        if (Test-Path $file) {
+            Write-Host "  Found: $file" -ForegroundColor Green
+        } else {
+            Write-Host "  Missing: $file" -ForegroundColor Red
+        }
+    }
+    
+    # 4. Deploy Database
+    Write-Host "Step 4: Deploying database..." -ForegroundColor Yellow
     
     $clearDb = "USE master; DROP DATABASE IF EXISTS LoanApplicationDB; CREATE DATABASE LoanApplicationDB;"
     Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Query $clearDb -ErrorAction SilentlyContinue
@@ -62,8 +91,8 @@ try {
         Write-Host "Sample data generated" -ForegroundColor Green
     }
     
-    # 4. Build Application
-    Write-Host "Step 4: Building application..." -ForegroundColor Yellow
+    # 5. Build Application
+    Write-Host "Step 5: Building application..." -ForegroundColor Yellow
     
     if (Test-Path "LoanApplication") {
         cd LoanApplication
@@ -75,8 +104,8 @@ try {
         Write-Host "Application built" -ForegroundColor Green
     }
     
-    # 5. Deploy to IIS
-    Write-Host "Step 5: Deploying to IIS..." -ForegroundColor Yellow
+    # 6. Deploy to IIS
+    Write-Host "Step 6: Deploying to IIS..." -ForegroundColor Yellow
     
     iisreset /stop
     Start-Sleep -Seconds 5
@@ -140,8 +169,8 @@ try {
     
     Write-Host "IIS configured" -ForegroundColor Green
     
-    # 6. Test
-    Write-Host "Step 6: Testing..." -ForegroundColor Yellow
+    # 7. Test
+    Write-Host "Step 7: Testing..." -ForegroundColor Yellow
     Start-Sleep -Seconds 10
     
     try {
