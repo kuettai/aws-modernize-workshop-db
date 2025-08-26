@@ -44,7 +44,8 @@ try {
     
     if ($GitRepo -ne "local") {
         try {
-            git clone $GitRepo .
+            git clone $GitRepo
+            Set-Location "C:\Workshop\aws-modernize-workshop-db"
             Write-Host "Repository cloned successfully" -ForegroundColor Green
         } catch {
             Write-Host "Git clone failed, assuming local files" -ForegroundColor Yellow
