@@ -130,7 +130,7 @@ CREATE DATABASE LoanApplicationDB;
     foreach ($table in $tables) {
         $result = Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -Query "SELECT COUNT(*) as Count FROM $table"
         $counts[$table] = $result.Count
-        Write-Host "    📊 $table`: $($result.Count) records" -ForegroundColor White
+        Write-Host "    📊 $table - $($result.Count) records" -ForegroundColor White
     }
     Write-Host "    ✅ Data verification complete" -ForegroundColor Green
     
