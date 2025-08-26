@@ -139,7 +139,28 @@ namespace LoanApplication.Data
                     .HasForeignKey(d => d.ApplicationId);
             });
 
-            base.OnModelCreating(modelBuilder);
+            // Reporting Tables Configuration
+            modelBuilder.Entity<DailyApplicationSummary>(entity =>
+            {
+                entity.HasKey(e => e.SummaryId);
+            });
+
+            modelBuilder.Entity<MonthlyLoanOfficerPerformance>(entity =>
+            {
+                entity.HasKey(e => e.PerformanceId);
+            });
+
+            modelBuilder.Entity<WeeklyCustomerAnalytics>(entity =>
+            {
+                entity.HasKey(e => e.AnalyticsId);
+            });
+
+            modelBuilder.Entity<BatchJobExecutionLog>(entity =>
+            {
+                entity.HasKey(e => e.ExecutionId);
+            });
+
+            base.OnModelCreating(modelBuilder);}
         }
     }
 }
