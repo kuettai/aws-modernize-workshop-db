@@ -160,7 +160,7 @@ namespace LoanApplication.Data
                 entity.HasKey(e => e.ExecutionId);
             });
 
-            base.OnModelCreating(modelBuilder);}
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
