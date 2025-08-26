@@ -4,20 +4,20 @@
 
 ### 🚀 Main Deployment Scripts
 
-#### `fresh-ec2-deployment.ps1` - **Primary Deployment Script**
+#### `simple-deployment.ps1` - **Primary Deployment Script**
 Complete workshop environment setup for fresh EC2 instances.
 - Configures SQL Server with SA authentication
 - Installs prerequisites (.NET 9.0 SDK, Git, Chocolatey)
 - Clones repository and deploys database schema
 - Builds and deploys .NET application
 - Configures IIS and security settings
-- **Usage**: `.\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"`
+- **Usage**: `.\simple-deployment.ps1 -SQLPassword "WorkshopDB123!"`
 
 #### `00-prerequisite-setup.ps1` - **PowerShell Policy Only**
 Sets PowerShell execution policy only (rarely needed).
 - PowerShell execution policy to RemoteSigned
 - **Usage**: `.\00-prerequisite-setup.ps1`
-- **Note**: Only use if PowerShell policy prevents running fresh-ec2-deployment.ps1
+- **Note**: Only use if PowerShell policy prevents running simple-deployment.ps1
 
 ### 🗄️ Database Scripts (Root Directory)
 
@@ -50,7 +50,7 @@ Generates realistic test data:
 ### For Fresh EC2 Instance (Complete Setup):
 ```powershell
 # Single command deployment (recommended)
-.\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"
+.\deployment\simple-deployment.ps1 -SQLPassword "WorkshopDB123!"
 ```
 
 ### If PowerShell Policy Issues:
@@ -59,7 +59,7 @@ Generates realistic test data:
 .\deployment\00-prerequisite-setup.ps1
 
 # Step 2: Run complete deployment
-.\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"
+.\deployment\simple-deployment.ps1 -SQLPassword "WorkshopDB123!"
 ```
 
 ## ✅ Post-Deployment Verification
