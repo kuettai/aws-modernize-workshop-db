@@ -13,13 +13,11 @@ Complete workshop environment setup for fresh EC2 instances.
 - Configures IIS and security settings
 - **Usage**: `.\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"`
 
-#### `00-prerequisite-setup.ps1` - **Prerequisites Only**
-Installs only prerequisites for manual setup.
-- PowerShell execution policy
-- Chocolatey package manager
-- Git installation
-- SQL Server basic configuration
+#### `00-prerequisite-setup.ps1` - **PowerShell Policy Only**
+Sets PowerShell execution policy only (rarely needed).
+- PowerShell execution policy to RemoteSigned
 - **Usage**: `.\00-prerequisite-setup.ps1`
+- **Note**: Only use if PowerShell policy prevents running fresh-ec2-deployment.ps1
 
 ### 🗄️ Database Scripts (Root Directory)
 
@@ -55,17 +53,13 @@ Generates realistic test data:
 .\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"
 ```
 
-### For Manual Setup:
+### If PowerShell Policy Issues:
 ```powershell
-# Step 1: Prerequisites only
+# Step 1: Fix PowerShell policy (if needed)
 .\deployment\00-prerequisite-setup.ps1
 
-# Step 2: Clone repository manually
-cd C:\Workshop
-git clone https://github.com/yourusername/your-repo.git .
-
-# Step 3: Run main deployment
-.\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!" -GitRepo "local"
+# Step 2: Run complete deployment
+.\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"
 ```
 
 ## ✅ Post-Deployment Verification
