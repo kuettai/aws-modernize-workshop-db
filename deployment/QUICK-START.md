@@ -42,10 +42,10 @@ cd C:\Workshop
 git clone https://github.com/yourusername/aws-database-modernization-workshop.git .
 ```
 
-### **Step 5: Run Main Deployment**
+### **Step 5: Run Complete Deployment**
 
 ```powershell
-# Deploy the complete workshop environment
+# Deploy the complete workshop environment (handles everything)
 .\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!"
 ```
 
@@ -72,17 +72,19 @@ After deployment completes, test these URLs:
 - **Main Deployment**: 15-20 minutes
 - **Total**: ~30 minutes
 
-## 🚨 **If You Don't Have GitHub Repository**
+## 🚨 **Alternative: Local Files Setup**
 
-### Option A: Manual File Transfer
-1. Run prerequisite setup script
-2. Copy workshop files to `C:\Workshop` via RDP
-3. Run deployment script
+### If You Have Workshop Files Locally:
+```powershell
+# Step 1: Run prerequisites
+.\deployment\00-prerequisite-setup.ps1
 
-### Option B: Create Temporary Repository
-1. Create a new GitHub repository
-2. Upload your workshop files
-3. Follow the normal clone process
+# Step 2: Copy files to C:\Workshop
+# (via RDP file transfer or USB)
+
+# Step 3: Run deployment with local files
+.\deployment\fresh-ec2-deployment.ps1 -SQLPassword "WorkshopDB123!" -GitRepo "local"
+```
 
 ## 🔧 **Troubleshooting**
 

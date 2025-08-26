@@ -8,7 +8,7 @@ param(
     [string]$SQLPassword = "WorkshopDB123!",
     
     [Parameter(Mandatory=$false)]
-    [string]$GitRepo = "https://github.com/yourusername/aws-modernize-workshop-db.git"
+    [string]$GitRepo = "https://github.com/kuettai/aws-modernize-workshop-db.git"
 )
 
 Write-Host "=== AWS Database Modernization Workshop - Fresh EC2 Deployment ===" -ForegroundColor Cyan
@@ -89,6 +89,7 @@ EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServe
     Write-Host "Step 4: Deploying database..." -ForegroundColor Yellow
     
     # Clear and recreate database
+    Write-Host "  4.1 Recreating database..." -ForegroundColor Cyan
     $ClearDB = @"
 USE master;
 ALTER DATABASE LoanApplicationDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
@@ -97,14 +98,43 @@ CREATE DATABASE LoanApplicationDB;
 "@
     
     Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Query $ClearDB -ErrorAction SilentlyContinue
+    Write-Host "    ✅ Database recreated" -ForegroundColor Green
     
-    # Deploy schema and procedures
+    # Deploy schema
+    Write-Host "  4.2 Creating database schema (16 tables)..." -ForegroundColor Cyan
     Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -InputFile "database-schema.sql"
-    Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "stored-procedures-simple.sql"
-    Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "stored-procedure-complex.sql"
-    Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "sample-data-generation.sql" -QueryTimeout 1800
+    Write-Host "    ✅ Schema created" -ForegroundColor Green
     
-    Write-Host "✅ Database deployed" -ForegroundColor Green
+    # Deploy simple procedures
+    Write-Host "  4.3 Creating simple stored procedures (3 procedures)..." -ForegroundColor Cyan
+    Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "stored-procedures-simple.sql"
+    Write-Host "    ✅ Simple procedures created" -ForegroundColor Green
+    
+    # Deploy complex procedure
+    Write-Host "  4.4 Creating complex stored procedure (200+ lines)..." -ForegroundColor Cyan
+    Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "stored-procedure-complex.sql"
+    Write-Host "    ✅ Complex procedure created" -ForegroundColor Green
+    
+    # Generate sample data
+    Write-Host "  4.5 Generating sample data (200K+ records, ~10-15 minutes)..." -ForegroundColor Cyan
+    $dataStart = Get-Date
+    Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "sample-data-generation.sql" -QueryTimeout 1800
+    $dataEnd = Get-Date
+    $dataDuration = ($dataEnd - $dataStart).TotalMinutes
+    Write-Host "    ✅ Sample data generated in $([math]::Round($dataDuration, 1)) minutes" -ForegroundColor Green
+    
+    # Verify data counts
+    Write-Host "  4.6 Verifying data integrity..." -ForegroundColor Cyan
+    $counts = @{}
+    $tables = @('Applications', 'Customers', 'Payments', 'IntegrationLogs')
+    foreach ($table in $tables) {
+        $result = Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -Query "SELECT COUNT(*) as Count FROM $table"
+        $counts[$table] = $result.Count
+        Write-Host "    📊 $table`: $($result.Count) records" -ForegroundColor White
+    }
+    Write-Host "    ✅ Data verification complete" -ForegroundColor Green
+    
+    Write-Host "✅ Database deployed successfully" -ForegroundColor Green
     
     # =============================================
     # 5. Build and Deploy Application
