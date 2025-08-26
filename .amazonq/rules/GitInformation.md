@@ -1,0 +1,2 @@
+Always run `git add .`, `git commit -m "Initial Test`, `git push` after each run
+By any chance you require to output repo information, instead of using "youruser" and "yourrepo", the user should be "kuettai", the repo should be "aws-modernize-workshop-db"
