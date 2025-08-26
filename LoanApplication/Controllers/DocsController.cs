@@ -25,7 +25,7 @@ namespace LoanApplication.Controllers
                 Documents = await _context.Documents.CountAsync(),
                 CreditChecks = await _context.CreditChecks.CountAsync(),
                 IntegrationLogs = await _context.IntegrationLogs.CountAsync(),
-                AuditTrail = await _context.AuditTrail.CountAsync()
+                // AuditTrail table not implemented yet
             };
 
             ViewBag.DatabaseStats = stats;

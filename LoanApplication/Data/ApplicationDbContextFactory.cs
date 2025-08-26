@@ -17,7 +17,7 @@ namespace LoanApplication.Data
         {
             var connectionString = _configuration.GetConnectionString("DefaultConnection");
             var optionsBuilder = new DbContextOptionsBuilder<LoanApplicationContext>();
-            optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.UseSqlServer(connectionString);
             
             _logger.LogDebug("Created write context with primary connection");
             return new LoanApplicationContext(optionsBuilder.Options);
@@ -31,7 +31,7 @@ namespace LoanApplication.Data
                 : _configuration.GetConnectionString("DefaultConnection");
 
             var optionsBuilder = new DbContextOptionsBuilder<LoanApplicationContext>();
-            optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.UseSqlServer(connectionString);
             
             _logger.LogDebug("Created read context using {ConnectionType}", 
                 enableReadReplica ? "read replica" : "primary connection");
