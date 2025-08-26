@@ -1,6 +1,7 @@
 param(
     [string]$SQLPassword = "WorkshopDB123!",
-    [string]$GitRepo = "https://github.com/kuettai/aws-modernize-workshop-db.git"
+    [string]$GitRepo = "https://github.com/kuettai/aws-modernize-workshop-db.git",
+    [switch]$SkipDatabase
 )
 
 Write-Host "=== Workshop Deployment ===" -ForegroundColor Cyan
@@ -66,41 +67,45 @@ try {
     }
     
     # 4. Deploy Database
-    Write-Host "Step 4: Deploying database..." -ForegroundColor Yellow
-    
-    $clearDb = "USE master; DROP DATABASE IF EXISTS LoanApplicationDB; CREATE DATABASE LoanApplicationDB;"
-    Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Query $clearDb -ErrorAction SilentlyContinue
-    
-    if (Test-Path "database-schema.sql") {
-        Write-Host "  Creating database schema..." -ForegroundColor Cyan
-        Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -InputFile "database-schema.sql"
-        Write-Host "  Database schema created" -ForegroundColor Green
+    if (-not $SkipDatabase) {
+        Write-Host "Step 4: Deploying database..." -ForegroundColor Yellow
+        
+        $clearDb = "USE master; DROP DATABASE IF EXISTS LoanApplicationDB; CREATE DATABASE LoanApplicationDB;"
+        Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Query $clearDb -ErrorAction SilentlyContinue
+        
+        if (Test-Path "database-schema.sql") {
+            Write-Host "  Creating database schema..." -ForegroundColor Cyan
+            Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -InputFile "database-schema.sql"
+            Write-Host "  Database schema created" -ForegroundColor Green
+        } else {
+            Write-Host "  WARNING: database-schema.sql not found - skipping schema creation" -ForegroundColor Yellow
+        }
+        
+        if (Test-Path "stored-procedures-simple.sql") {
+            Write-Host "  Creating simple stored procedures..." -ForegroundColor Cyan
+            Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "stored-procedures-simple.sql"
+            Write-Host "  Simple procedures created" -ForegroundColor Green
+        } else {
+            Write-Host "  WARNING: stored-procedures-simple.sql not found - skipping" -ForegroundColor Yellow
+        }
+        
+        if (Test-Path "stored-procedure-complex.sql") {
+            Write-Host "  Creating complex stored procedure..." -ForegroundColor Cyan
+            Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "stored-procedure-complex.sql"
+            Write-Host "  Complex procedure created" -ForegroundColor Green
+        } else {
+            Write-Host "  WARNING: stored-procedure-complex.sql not found - skipping" -ForegroundColor Yellow
+        }
+        
+        if (Test-Path "sample-data-generation.sql") {
+            Write-Host "  Generating sample data (this may take 10-15 minutes)..." -ForegroundColor Yellow
+            Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "sample-data-generation.sql" -QueryTimeout 1800
+            Write-Host "  Sample data generated" -ForegroundColor Green
+        } else {
+            Write-Host "  WARNING: sample-data-generation.sql not found - database will be empty" -ForegroundColor Yellow
+        }
     } else {
-        Write-Host "  WARNING: database-schema.sql not found - skipping schema creation" -ForegroundColor Yellow
-    }
-    
-    if (Test-Path "stored-procedures-simple.sql") {
-        Write-Host "  Creating simple stored procedures..." -ForegroundColor Cyan
-        Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "stored-procedures-simple.sql"
-        Write-Host "  Simple procedures created" -ForegroundColor Green
-    } else {
-        Write-Host "  WARNING: stored-procedures-simple.sql not found - skipping" -ForegroundColor Yellow
-    }
-    
-    if (Test-Path "stored-procedure-complex.sql") {
-        Write-Host "  Creating complex stored procedure..." -ForegroundColor Cyan
-        Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "stored-procedure-complex.sql"
-        Write-Host "  Complex procedure created" -ForegroundColor Green
-    } else {
-        Write-Host "  WARNING: stored-procedure-complex.sql not found - skipping" -ForegroundColor Yellow
-    }
-    
-    if (Test-Path "sample-data-generation.sql") {
-        Write-Host "  Generating sample data (this may take 10-15 minutes)..." -ForegroundColor Yellow
-        Invoke-Sqlcmd -ServerInstance "localhost" -Username "sa" -Password $SQLPassword -Database "LoanApplicationDB" -InputFile "sample-data-generation.sql" -QueryTimeout 1800
-        Write-Host "  Sample data generated" -ForegroundColor Green
-    } else {
-        Write-Host "  WARNING: sample-data-generation.sql not found - database will be empty" -ForegroundColor Yellow
+        Write-Host "Step 4: Skipping database deployment (SkipDatabase flag set)" -ForegroundColor Yellow
     }
     
     # 5. Build Application
