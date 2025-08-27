@@ -132,8 +132,12 @@ builder.Services.AddScoped<IPaymentsRepository, PaymentsRepository>();
 
 ### 🧪 Test the Repository
 
-Add a test endpoint to DocsController:
+1. **Add using directive** to DocsController.cs:
+```csharp
+using LoanApplication.Repositories;
+```
 
+2. **Add test endpoint** to DocsController:
 ```csharp
 [HttpGet("test-payments")]
 public async Task<IActionResult> TestPayments([FromServices] IPaymentsRepository paymentsRepo)
@@ -144,7 +148,18 @@ public async Task<IActionResult> TestPayments([FromServices] IPaymentsRepository
 }
 ```
 
-Test at: `http://localhost:5000/test-payments`
+3. **Run the application**:
+```powershell
+cd LoanApplication
+dotnet run
+```
+
+4. **Test the endpoint**: Visit `http://localhost:5000/test-payments`
 
 **Estimated Time**: 10-15 minutes  
 **Difficulty**: Easy (copy and test)
+
+### 🚨 Troubleshooting
+
+**Error**: `IPaymentsRepository could not be found`  
+**Fix**: Add `using LoanApplication.Repositories;` to DocsController.cs
