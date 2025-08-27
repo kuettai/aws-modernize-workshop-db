@@ -6,7 +6,7 @@ param(
     [ValidateSet("dev", "test", "prod")]
     [string]$Environment,
     
-    [string]$Region = "us-east-1",
+    [string]$Region = "us-west-2",
     [string]$StackName = "loanapp-dynamodb-logs"
 )
 
@@ -21,8 +21,7 @@ aws cloudformation deploy `
     --stack-name "$StackName-$Environment" `
     --parameter-overrides Environment=$Environment `
     --region $Region `
-    --capabilities CAPABILITY_NAMED_IAM `
-    --profile mmws
+    --capabilities CAPABILITY_NAMED_IAM
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "CloudFormation stack deployed successfully" -ForegroundColor Green
@@ -32,13 +31,12 @@ if ($LASTEXITCODE -eq 0) {
         --stack-name "$StackName-$Environment" `
         --region $Region `
         --query "Stacks[0].Outputs[?OutputKey=='TableName'].OutputValue" `
-        --output text `
-        --profile mmws
+        --output text
     
     Write-Host "Table Name: $tableName" -ForegroundColor Cyan
     
     # Verify table status
-    $tableStatus = aws dynamodb describe-table --table-name $tableName --region $Region --query "Table.TableStatus" --output text --profile mmws
+    $tableStatus = aws dynamodb describe-table --table-name $tableName --region $Region --query "Table.TableStatus" --output text
     
     if ($tableStatus -eq "ACTIVE") {
         Write-Host "Table is ACTIVE and ready for use" -ForegroundColor Green
