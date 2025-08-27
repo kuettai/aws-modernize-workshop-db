@@ -241,4 +241,4 @@ await _dynamoDbService.WriteLogAsync(dynamoLog);
 3. "Analyze the migration strategy and suggest improvements for the dual-write period to ensure data consistency."
 ```
 
-**Next**: [DynamoDB Table Design](../03-migration-steps/step1-dynamodb-design.md)
+**Next**: [DynamoDB Table Design](../03-migration-steps/01-step1-dynamodb-design.md)

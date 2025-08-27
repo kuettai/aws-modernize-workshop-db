@@ -149,4 +149,4 @@ Use these prompts to analyze the current implementation:
 3. "Examine this .NET logging implementation and suggest how to refactor it for hybrid PostgreSQL + DynamoDB architecture."
 ```
 
-**Next**: [Integration Log Usage Analysis](./integration-log-usage-analysis.md)
+**Next**: [Integration Log Usage Analysis](./02-integration-log-usage-analysis.md)
