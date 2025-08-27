@@ -145,6 +145,14 @@ public async Task<IActionResult> TestDynamoDb([FromServices] IDynamoDbLogService
    - Example: `http://localhost:5000/test-dynamodb`
    - Use the port number from your `dotnet run` console output
 
+4. **Explore the data in DynamoDB**:
+   - Go to AWS Console → DynamoDB → Tables
+   - Click on `LoanApp-IntegrationLogs-dev` table
+   - Click "Explore table items" to see your test data
+   - Notice the partition key (PK) format: `TestService-2024-01-15`
+   - Notice the sort key (SK) format: `2024-01-15T10:30:00.123Z#1705312200123`
+   - Observe the TTL field set to 90 days from now
+
 ### 🚀 Next Steps
 1. **Add NuGet packages** for AWS SDK
 2. **Update Program.cs** with DI registration
