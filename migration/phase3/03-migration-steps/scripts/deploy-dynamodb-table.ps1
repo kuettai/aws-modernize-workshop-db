@@ -109,9 +109,14 @@ if ($LASTEXITCODE -eq 0) {
             Write-Host "✅ Test write operation successful" -ForegroundColor Green
             
             # Test read operation
+            $testKey = @{
+                PK = @{ S = "TestService-$(Get-Date -Format 'yyyy-MM-dd')" }
+                SK = @{ S = "$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')#TEST001" }
+            } | ConvertTo-Json -Depth 10 -Compress
+            
             aws dynamodb get-item `
                 --table-name $tableName `
-                --key "{`"PK`":{`"S`":`"TestService-$(Get-Date -Format 'yyyy-MM-dd')`"},`"SK`":{`"S`":`"$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')#TEST001`"}}" `
+                --key $testKey `
                 --region $Region `
                 --output table
             

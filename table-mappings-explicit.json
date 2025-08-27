@@ -1,0 +1,24 @@
+{
+    "rules": [
+        {
+            "rule-type": "selection",
+            "rule-id": "1",
+            "rule-name": "select-applications",
+            "object-locator": {
+                "schema-name": "dbo",
+                "table-name": "Applications"
+            },
+            "rule-action": "include"
+        },
+        {
+            "rule-type": "selection",
+            "rule-id": "2",
+            "rule-name": "select-customers",
+            "object-locator": {
+                "schema-name": "dbo",
+                "table-name": "Customers"
+            },
+            "rule-action": "include"
+        }
+    ]
+}
