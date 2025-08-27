@@ -269,4 +269,56 @@ public class PaymentTransformer
 3. **Distribution**: Use customer ID for even partition distribution
 4. **Monitoring**: CloudWatch alarms for cost and performance metrics
 
-The Payments table analysis is complete and ready for DynamoDB table design implementation!
+### 🚀 Next Steps: Create DynamoDB Tables
+
+Before proceeding to implementation, you need to create the DynamoDB tables:
+
+#### 1. Deploy IntegrationLogs Table
+```powershell
+# Navigate to scripts folder
+cd migration/phase3/03-migration-steps/scripts
+
+# Deploy DynamoDB table
+./deploy-dynamodb-table.ps1 -Environment dev
+```
+
+#### 2. Create Payments Table
+```bash
+# Create payments table with GSIs
+aws dynamodb create-table \
+  --table-name "Payments" \
+  --attribute-definitions \
+    AttributeName=CustomerId,AttributeType=N \
+    AttributeName=PaymentDateId,AttributeType=S \
+    AttributeName=PaymentId,AttributeType=N \
+    AttributeName=PaymentStatus,AttributeType=S \
+    AttributeName=PaymentDate,AttributeType=S \
+    AttributeName=LoanId,AttributeType=N \
+  --key-schema \
+    AttributeName=CustomerId,KeyType=HASH \
+    AttributeName=PaymentDateId,KeyType=RANGE \
+  --global-secondary-indexes \
+    IndexName=GSI4-PaymentId-Index,KeySchema=[{AttributeName=PaymentId,KeyType=HASH}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5} \
+    IndexName=PaymentStatusIndex,KeySchema=[{AttributeName=PaymentStatus,KeyType=HASH},{AttributeName=PaymentDate,KeyType=RANGE}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5} \
+    IndexName=LoanPaymentIndex,KeySchema=[{AttributeName=LoanId,KeyType=HASH},{AttributeName=PaymentDateId,KeyType=RANGE}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5} \
+  --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+  --profile mmws
+```
+
+#### 3. Verify Tables Created
+```bash
+# Check IntegrationLogs table
+aws dynamodb describe-table --table-name "LoanApp-IntegrationLogs-dev" --profile mmws
+
+# Check Payments table
+aws dynamodb describe-table --table-name "Payments" --profile mmws
+```
+
+#### 4. Alternative: Use AWS Console
+1. Go to AWS DynamoDB Console
+2. Create tables manually using the specifications above
+3. Ensure all GSIs are created with correct key schemas
+
+**✅ Checkpoint**: Both tables should show "ACTIVE" status before proceeding to repository implementation.
+
+**Next**: [DynamoDB Table Design](../03-migration-steps/01-step1-dynamodb-design.md)
