@@ -92,8 +92,8 @@ if ($LASTEXITCODE -eq 0) {
         Write-Host "🧪 Testing basic table operations..." -ForegroundColor Yellow
         
         # Test write operation
-        $dateStr = Get-Date -Format 'yyyy-MM-dd'
-        $timestampStr = Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ'
+        $dateStr = Get-Date -Format "yyyy-MM-dd"
+        $timestampStr = Get-Date -Format "yyyy-MM-ddTHH:mm:ss.fffZ"
         $testItem = @{
             PK = @{ S = "TestService-$dateStr" }
             SK = @{ S = "$timestampStr#TEST001" }
