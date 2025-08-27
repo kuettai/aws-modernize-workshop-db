@@ -631,4 +631,4 @@ public async Task<IActionResult> TestDynamoDb()
 3. "Examine the query patterns and suggest optimizations for DynamoDB GSI usage and cost management."
 ```
 
-**Next**: [Dual-Write Pattern Implementation](./step3-dual-write-pattern.md)
+**Next**: [Dual-Write Pattern Implementation](./06-step3-dual-write-pattern.md)

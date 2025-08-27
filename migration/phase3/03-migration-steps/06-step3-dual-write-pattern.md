@@ -620,4 +620,4 @@ public async Task DualWrite_ShouldWriteToBothSystems()
 3. "Examine the validation logic and suggest enhancements for detecting data discrepancies between SQL and DynamoDB."
 ```
 
-**Next**: [Data Migration Scripts](./step4-data-migration.md)
+**Next**: [Data Migration Scripts](./07-step4-data-migration.md)

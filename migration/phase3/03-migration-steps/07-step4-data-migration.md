@@ -785,4 +785,4 @@ if ($LASTEXITCODE -eq 0) {
 3. "Examine the resume capability and suggest enhancements for handling partial failures and data consistency."
 ```
 
-**Next**: [Application Integration](./step5-application-integration.md)
+**Next**: [Application Integration](./09-step5-application-integration.md)

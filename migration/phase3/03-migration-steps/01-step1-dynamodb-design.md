@@ -341,4 +341,4 @@ GSI2: GSI2PK = "CORR#abc-123-def-456"
 3. "Validate this CloudFormation template and suggest additional configurations for production deployment."
 ```
 
-**Next**: [Create New Services](./step2-create-new-services.md)
+**Next**: [Create New Services](./03-step2-create-new-services.md)
