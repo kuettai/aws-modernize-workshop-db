@@ -159,10 +159,24 @@ cd LoanApplication
 dotnet run
 ```
 
-2. **Test endpoints**:
-- `POST http://localhost:5000/api/payments` - Process payment
+2. **Test GET endpoints**:
 - `GET http://localhost:5000/api/payments/customer/1` - Get customer payments
 - `GET http://localhost:5000/api/payments/pending` - Get pending payments
+
+3. **Test POST endpoint** (dual-write to both MSSQL and DynamoDB):
+```powershell
+$payment = @{
+    CustomerId = 1
+    LoanId = 1
+    PaymentAmount = 500.00
+    PaymentDate = "2024-01-15T10:30:00Z"
+    PaymentMethod = "Cash"  # Valid: Cash, Check, CreditCard, BankTransfer
+    PaymentStatus = "Completed"
+    CreatedDate = "2024-01-15T10:30:00Z"
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri "http://localhost:5000/api/payments" -Method POST -Body $payment -ContentType "application/json"
+```
 
 **Estimated Time**: 15-20 minutes  
 **Difficulty**: Easy (copy and test)
@@ -174,3 +188,6 @@ dotnet run
 
 **Error**: `PaymentSettings section not found`  
 **Fix**: Add PaymentSettings section to appsettings.json
+
+**Error**: `CHECK constraint violation on PaymentMethod`  
+**Fix**: Use valid PaymentMethod values: `Cash`, `Check`, `CreditCard`, or `BankTransfer`
