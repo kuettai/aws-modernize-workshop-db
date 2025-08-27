@@ -44,6 +44,7 @@ copy migration\phase3\LoanApplication\Services\IHybridLogService.cs LoanApplicat
 copy migration\phase3\LoanApplication\Services\HybridLogService.cs LoanApplication\Services\
 copy migration\phase3\LoanApplication\Configuration\HybridLogConfiguration.cs LoanApplication\Configuration\
 copy migration\phase3\LoanApplication\Controllers\MigrationController.cs LoanApplication\Controllers\
+copy migration\phase3\LoanApplication\Extensions\ServiceCollectionExtensions.cs LoanApplication\Extensions\
 ```
 
 ### ⚙️ Update Configuration
@@ -57,6 +58,17 @@ Add to appsettings.json:
     "ReadsFromDynamoDb": false
   }
 }
+```
+
+### 🔧 Update Program.cs
+
+Replace the DynamoDB service registration:
+```csharp
+// Replace this line:
+// builder.Services.AddDynamoDbServices(builder.Configuration);
+
+// With this:
+builder.Services.AddHybridLoggingServices(builder.Configuration);
 ```
 
 ### 🚀 Test Dual-Write Pattern
