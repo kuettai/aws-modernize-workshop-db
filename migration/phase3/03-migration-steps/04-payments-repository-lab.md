@@ -1,5 +1,5 @@
 # DynamoDB Payments Repository Implementation
-## Step 4.4 - Repository Pattern with Working Examples
+## Step 4 - Repository Pattern with Working Examples
 
 ### 🎯 Objectives
 - Understand DynamoDB repository patterns through 2 key examples
@@ -14,6 +14,8 @@
 ---
 
 ## 📝 Example 1: Get Payment by ID (GSI Query)
+
+**File**: `LoanApplication/Repositories/PaymentsRepository.cs`
 
 ```csharp
 public async Task<Payment?> GetPaymentByIdAsync(int paymentId)
@@ -53,6 +55,8 @@ public async Task<Payment?> GetPaymentByIdAsync(int paymentId)
 ---
 
 ## 📝 Example 2: Get Customer Payments (Primary Key Query)
+
+**File**: `LoanApplication/Repositories/PaymentsRepository.cs`
 
 ```csharp
 public async Task<List<Payment>> GetCustomerPaymentsAsync(int customerId, DateTime? startDate = null, DateTime? endDate = null, int limit = 50)
