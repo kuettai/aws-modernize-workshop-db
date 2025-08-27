@@ -83,10 +83,11 @@ namespace LoanApplication.Services
                 }
             }
 
-            // Fallback to PostgreSQL (join with Loans to get CustomerId)
+            // Fallback to PostgreSQL (join through Loan -> Application to get CustomerId)
             var pgPayments = await _pgContext.Payments
                 .Include(p => p.Loan)
-                .Where(p => p.Loan.CustomerId == customerId)
+                .ThenInclude(l => l.Application)
+                .Where(p => p.Loan.Application.CustomerId == customerId)
                 .OrderByDescending(p => p.PaymentDate)
                 .Take(limit)
                 .ToListAsync();
@@ -94,7 +95,7 @@ namespace LoanApplication.Services
             return pgPayments.Select(p => new DynamoDbPayment
             {
                 PaymentId = p.PaymentId,
-                CustomerId = p.Loan.CustomerId,
+                CustomerId = p.Loan.Application.CustomerId,
                 LoanId = p.LoanId,
                 PaymentAmount = p.PaymentAmount,
                 PaymentDate = p.PaymentDate,
