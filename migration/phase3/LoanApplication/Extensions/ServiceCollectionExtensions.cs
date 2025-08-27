@@ -44,5 +44,13 @@ namespace LoanApplication.Extensions
             
             return services;
         }
+        
+        public static IServiceCollection AddHybridLoggingServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDynamoDbServices(configuration);
+            services.Configure<HybridLogConfiguration>(configuration.GetSection(HybridLogConfiguration.SectionName));
+            services.AddScoped<IHybridLogService, HybridLogService>();
+            return services;
+        }
     }
 }
