@@ -6,7 +6,7 @@ param(
     [ValidateSet("dev", "test", "prod")]
     [string]$Environment,
     
-    [string]$Region = "us-west-2",
+    [string]$Region = "ap-southeast-1",
     [string]$StackName = "loanapp-dynamodb-logs"
 )
 
