@@ -1,0 +1,58 @@
+{
+  "rules": [
+    {
+      "rule-type": "selection",
+      "rule-id": "1",
+      "rule-name": "include-integration-logs",
+      "object-locator": {
+        "schema-name": "public",
+        "table-name": "integrationlogs"
+      },
+      "rule-action": "include"
+    },
+    {
+      "rule-type": "object-mapping",
+      "rule-id": "2",
+      "rule-name": "map-to-dynamodb",
+      "rule-target": "table",
+      "object-locator": {
+        "schema-name": "public",
+        "table-name": "integrationlogs"
+      },
+      "target-table-name": "LoanApp-IntegrationLogs-dev",
+      "mapping-parameters": {
+        "partition-key-name": "PK",
+        "sort-key-name": "SK",
+        "attribute-mappings": [
+          {
+            "target-attribute-name": "PK",
+            "attribute-type": "scalar",
+            "value": "${servicename}-${date(logtimestamp,'YYYY-MM-DD')}"
+          },
+          {
+            "target-attribute-name": "SK", 
+            "attribute-type": "scalar",
+            "value": "${date(logtimestamp,'YYYY-MM-DDTHH:MI:SS.FFF')}Z#${logid}"
+          },
+          {
+            "target-attribute-name": "GSI1PK",
+            "attribute-type": "scalar", 
+            "value": "APP#${applicationid}",
+            "when": "${applicationid} != null"
+          },
+          {
+            "target-attribute-name": "GSI1SK",
+            "attribute-type": "scalar",
+            "value": "${date(logtimestamp,'YYYY-MM-DDTHH:MI:SS.FFF')}Z#${logid}",
+            "when": "${applicationid} != null"
+          },
+          {
+            "target-attribute-name": "TTL",
+            "attribute-type": "scalar",
+            "value": "${epoch(dateadd('day',90,now()))}"
+          }
+        ]
+      }
+    }
+  ]
+}
