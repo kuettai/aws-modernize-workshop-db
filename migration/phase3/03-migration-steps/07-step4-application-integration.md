@@ -1,4 +1,4 @@
-# Step 5: Application Integration
+# Step 4: Application Integration
 ## Phase 3: DynamoDB Migration - Complete Application Updates
 
 ### 🎯 Objective
