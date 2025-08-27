@@ -1,6 +1,7 @@
 using LoanApplication.Repositories;
 using LoanApplication.Models;
 using LoanApplication.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace LoanApplication.Services
 {
@@ -31,12 +32,15 @@ namespace LoanApplication.Services
                 var pgPayment = new Payment
                 {
                     PaymentId = payment.PaymentId,
-                    CustomerId = payment.CustomerId,
                     LoanId = payment.LoanId,
+                    PaymentNumber = 1, // Default payment number
                     PaymentAmount = payment.PaymentAmount,
+                    PrincipalAmount = payment.PaymentAmount * 0.8m, // Estimate
+                    InterestAmount = payment.PaymentAmount * 0.2m, // Estimate
                     PaymentDate = payment.PaymentDate,
                     PaymentMethod = payment.PaymentMethod,
                     PaymentStatus = payment.PaymentStatus,
+                    TransactionId = payment.TransactionReference,
                     CreatedDate = payment.CreatedDate
                 };
 
@@ -79,9 +83,10 @@ namespace LoanApplication.Services
                 }
             }
 
-            // Fallback to PostgreSQL
+            // Fallback to PostgreSQL (join with Loans to get CustomerId)
             var pgPayments = await _pgContext.Payments
-                .Where(p => p.CustomerId == customerId)
+                .Include(p => p.Loan)
+                .Where(p => p.Loan.CustomerId == customerId)
                 .OrderByDescending(p => p.PaymentDate)
                 .Take(limit)
                 .ToListAsync();
@@ -89,12 +94,13 @@ namespace LoanApplication.Services
             return pgPayments.Select(p => new DynamoDbPayment
             {
                 PaymentId = p.PaymentId,
-                CustomerId = p.CustomerId,
+                CustomerId = p.Loan.CustomerId,
                 LoanId = p.LoanId,
                 PaymentAmount = p.PaymentAmount,
                 PaymentDate = p.PaymentDate,
                 PaymentMethod = p.PaymentMethod,
                 PaymentStatus = p.PaymentStatus,
+                TransactionReference = p.TransactionId,
                 CreatedDate = p.CreatedDate
             }).ToList();
         }
