@@ -141,7 +141,9 @@ public async Task<IActionResult> TestDynamoDb([FromServices] IDynamoDbLogService
 }
 ```
 
-3. **Test the endpoint**: Run the app and visit `https://localhost:7139/docs/test-dynamodb`
+3. **Test the endpoint**: Run the app and visit the URL shown in console output + `/test-dynamodb`
+   - Example: `http://localhost:5000/test-dynamodb`
+   - Use the port number from your `dotnet run` console output
 
 ### 🚀 Next Steps
 1. **Add NuGet packages** for AWS SDK
