@@ -18,7 +18,7 @@
 **File**: `LoanApplication/Repositories/PaymentsRepository.cs`
 
 ```csharp
-public async Task<Payment?> GetPaymentByIdAsync(int paymentId)
+public async Task<DynamoDbPayment?> GetPaymentByIdAsync(int paymentId)
 {
     try
     {
@@ -59,7 +59,7 @@ public async Task<Payment?> GetPaymentByIdAsync(int paymentId)
 **File**: `LoanApplication/Repositories/PaymentsRepository.cs`
 
 ```csharp
-public async Task<List<Payment>> GetCustomerPaymentsAsync(int customerId, DateTime? startDate = null, DateTime? endDate = null, int limit = 50)
+public async Task<List<DynamoDbPayment>> GetCustomerPaymentsAsync(int customerId, DateTime? startDate = null, DateTime? endDate = null, int limit = 50)
 {
     try
     {
@@ -93,7 +93,7 @@ public async Task<List<Payment>> GetCustomerPaymentsAsync(int customerId, DateTi
     catch (Exception ex)
     {
         _logger.LogError(ex, "Failed to get payments for customer {CustomerId}", customerId);
-        return new List<Payment>();
+        return new List<DynamoDbPayment>();
     }
 }
 ```
@@ -117,7 +117,7 @@ mkdir LoanApplication\Repositories -Force
 # Copy repository files
 copy migration\phase3\LoanApplication\Repositories\IPaymentsRepository.cs LoanApplication\Repositories\
 copy migration\phase3\LoanApplication\Repositories\PaymentsRepository.cs LoanApplication\Repositories\
-copy migration\phase3\LoanApplication\Models\Payment.cs LoanApplication\Models\
+copy migration\phase3\LoanApplication\Models\Payment.cs LoanApplication\Models\DynamoDbPayment.cs
 ```
 
 ### 🔧 Register Repository in Program.cs

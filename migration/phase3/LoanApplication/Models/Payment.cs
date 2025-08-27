@@ -3,7 +3,7 @@ using Amazon.DynamoDBv2.DataModel;
 namespace LoanApplication.Models
 {
     [DynamoDBTable("LoanApp-Payments-dev")]
-    public class Payment
+    public class DynamoDbPayment
     {
         [DynamoDBHashKey("CustomerId")]
         public int CustomerId { get; set; }

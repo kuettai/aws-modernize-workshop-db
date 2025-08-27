@@ -15,7 +15,7 @@ namespace LoanApplication.Repositories
             _logger = logger;
         }
 
-        public async Task<Payment?> GetPaymentByIdAsync(int paymentId)
+        public async Task<DynamoDbPayment?> GetPaymentByIdAsync(int paymentId)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace LoanApplication.Repositories
                     }
                 };
 
-                var search = _dynamoContext.FromQueryAsync<Payment>(queryConfig);
+                var search = _dynamoContext.FromQueryAsync<DynamoDbPayment>(queryConfig);
                 var results = await search.GetRemainingAsync();
                 return results.FirstOrDefault();
             }
@@ -43,7 +43,7 @@ namespace LoanApplication.Repositories
             }
         }
 
-        public async Task<List<Payment>> GetCustomerPaymentsAsync(int customerId, DateTime? startDate = null, DateTime? endDate = null, int limit = 50)
+        public async Task<List<DynamoDbPayment>> GetCustomerPaymentsAsync(int customerId, DateTime? startDate = null, DateTime? endDate = null, int limit = 50)
         {
             try
             {
@@ -71,17 +71,17 @@ namespace LoanApplication.Repositories
                     queryConfig.KeyExpression.ExpressionAttributeValues.Add(":endKey", endKey);
                 }
 
-                var search = _dynamoContext.FromQueryAsync<Payment>(queryConfig);
+                var search = _dynamoContext.FromQueryAsync<DynamoDbPayment>(queryConfig);
                 return await search.GetRemainingAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to get payments for customer {CustomerId}", customerId);
-                return new List<Payment>();
+                return new List<DynamoDbPayment>();
             }
         }
 
-        public async Task<List<Payment>> GetPaymentsByStatusAsync(string status, DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<List<DynamoDbPayment>> GetPaymentsByStatusAsync(string status, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
@@ -105,17 +105,17 @@ namespace LoanApplication.Repositories
                     queryConfig.KeyExpression.ExpressionAttributeValues.Add(":endDate", endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"));
                 }
 
-                var search = _dynamoContext.FromQueryAsync<Payment>(queryConfig);
+                var search = _dynamoContext.FromQueryAsync<DynamoDbPayment>(queryConfig);
                 return await search.GetRemainingAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to get payments by status {Status}", status);
-                return new List<Payment>();
+                return new List<DynamoDbPayment>();
             }
         }
 
-        public async Task<List<Payment>> GetLoanPaymentsAsync(int loanId)
+        public async Task<List<DynamoDbPayment>> GetLoanPaymentsAsync(int loanId)
         {
             try
             {
@@ -133,17 +133,17 @@ namespace LoanApplication.Repositories
                     BackwardSearch = true
                 };
 
-                var search = _dynamoContext.FromQueryAsync<Payment>(queryConfig);
+                var search = _dynamoContext.FromQueryAsync<DynamoDbPayment>(queryConfig);
                 return await search.GetRemainingAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to get payments for loan {LoanId}", loanId);
-                return new List<Payment>();
+                return new List<DynamoDbPayment>();
             }
         }
 
-        public async Task<bool> InsertPaymentAsync(Payment payment)
+        public async Task<bool> InsertPaymentAsync(DynamoDbPayment payment)
         {
             try
             {
@@ -182,11 +182,11 @@ namespace LoanApplication.Repositories
             }
         }
 
-        public async Task<bool> InsertPaymentBatchAsync(List<Payment> payments)
+        public async Task<bool> InsertPaymentBatchAsync(List<DynamoDbPayment> payments)
         {
             try
             {
-                var batchWrite = _dynamoContext.CreateBatchWrite<Payment>();
+                var batchWrite = _dynamoContext.CreateBatchWrite<DynamoDbPayment>();
                 
                 foreach (var payment in payments)
                 {
