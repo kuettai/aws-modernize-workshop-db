@@ -91,4 +91,4 @@ curl http://localhost:5000/api/migration/enable-dual-write
 3. "Examine the validation logic and suggest enhancements for detecting data discrepancies between SQL and DynamoDB."
 ```
 
-**Next**: [DMS Migration](./07-step4-dms-migration.md)
+**Next**: [DMS Migration](./04-dms-migration.md)

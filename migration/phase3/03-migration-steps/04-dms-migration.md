@@ -81,4 +81,4 @@ aws dynamodb scan --table-name LoanApp-IntegrationLogs-dev --select COUNT
 2. "Analyze the table mapping rules and recommend improvements for data transformation and key generation."
 ```
 
-**Next**: [Application Integration](./08-step5-application-integration.md)
+**Next**: [Application Integration](./05-application-integration.md)
