@@ -89,6 +89,70 @@ Resources:
         - Key: Phase
           Value: Phase3-DynamoDB
 
+  PaymentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'Payments-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      
+      AttributeDefinitions:
+        - AttributeName: CustomerId
+          AttributeType: N
+        - AttributeName: PaymentDateId
+          AttributeType: S
+        - AttributeName: PaymentId
+          AttributeType: N
+        - AttributeName: PaymentStatus
+          AttributeType: S
+        - AttributeName: PaymentDate
+          AttributeType: S
+        - AttributeName: LoanId
+          AttributeType: N
+      
+      KeySchema:
+        - AttributeName: CustomerId
+          KeyType: HASH
+        - AttributeName: PaymentDateId
+          KeyType: RANGE
+      
+      GlobalSecondaryIndexes:
+        - IndexName: GSI4-PaymentId-Index
+          KeySchema:
+            - AttributeName: PaymentId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        
+        - IndexName: PaymentStatusIndex
+          KeySchema:
+            - AttributeName: PaymentStatus
+              KeyType: HASH
+            - AttributeName: PaymentDate
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        
+        - IndexName: LoanPaymentIndex
+          KeySchema:
+            - AttributeName: LoanId
+              KeyType: HASH
+            - AttributeName: PaymentDateId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: LoanApplication
+        - Key: Component
+          Value: Payments
+        - Key: Workshop
+          Value: DatabaseModernization
+        - Key: Phase
+          Value: Phase3-DynamoDB
+
   # IAM Role for DynamoDB access
   DynamoDBAccessRole:
     Type: AWS::IAM::Role
@@ -147,3 +211,15 @@ Outputs:
     Value: !GetAtt DynamoDBInstanceProfile.Arn
     Export:
       Name: !Sub '${AWS::StackName}-InstanceProfileArn'
+  
+  PaymentsTableName:
+    Description: 'DynamoDB table name for Payments'
+    Value: !Ref PaymentsTable
+    Export:
+      Name: !Sub '${AWS::StackName}-PaymentsTableName'
+  
+  PaymentsTableArn:
+    Description: 'Payments table ARN'
+    Value: !GetAtt PaymentsTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-PaymentsTableArn'
