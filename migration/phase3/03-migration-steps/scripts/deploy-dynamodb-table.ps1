@@ -92,13 +92,15 @@ if ($LASTEXITCODE -eq 0) {
         Write-Host "🧪 Testing basic table operations..." -ForegroundColor Yellow
         
         # Test write operation
+        $dateStr = Get-Date -Format 'yyyy-MM-dd'
+        $timestampStr = Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ'
         $testItem = @{
-            PK = @{ S = "TestService-$(Get-Date -Format 'yyyy-MM-dd')" }
-            SK = @{ S = "$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')#TEST001" }
+            PK = @{ S = "TestService-$dateStr" }
+            SK = @{ S = "$timestampStr#TEST001" }
             LogId = @{ N = "1" }
             LogType = @{ S = "TEST" }
             ServiceName = @{ S = "TestService" }
-            LogTimestamp = @{ S = "$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')" }
+            LogTimestamp = @{ S = $timestampStr }
             IsSuccess = @{ BOOL = $true }
             TTL = @{ N = "$([DateTimeOffset]::UtcNow.AddDays(1).ToUnixTimeSeconds())" }
         } | ConvertTo-Json -Depth 10
@@ -110,8 +112,8 @@ if ($LASTEXITCODE -eq 0) {
             
             # Test read operation
             $testKey = @{
-                PK = @{ S = "TestService-$(Get-Date -Format 'yyyy-MM-dd')" }
-                SK = @{ S = "$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')#TEST001" }
+                PK = @{ S = "TestService-$dateStr" }
+                SK = @{ S = "$timestampStr#TEST001" }
             } | ConvertTo-Json -Depth 10 -Compress
             
             aws dynamodb get-item `
