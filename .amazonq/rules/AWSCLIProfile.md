@@ -1,0 +1,1 @@
+For one-time command generate to run AWS CLI (not the one within the instruction, e.g: .md), added this parameter into the AWS command ` --profile mmws`
