@@ -8,13 +8,17 @@ Create new service layer for DynamoDB operations while maintaining existing SQL 
 
 All files have been pre-created in the phase3 folder. Copy them to your main application:
 
-```bash
+```powershell
+# Create directories first
+mkdir LoanApplication\Configuration -Force
+mkdir LoanApplication\Extensions -Force
+
 # Copy all DynamoDB service files
-cp migration/phase3/LoanApplication/Models/DynamoDbLogEntry.cs LoanApplication/Models/
-cp migration/phase3/LoanApplication/Services/IDynamoDbLogService.cs LoanApplication/Services/
-cp migration/phase3/LoanApplication/Services/DynamoDbLogService.cs LoanApplication/Services/
-cp migration/phase3/LoanApplication/Configuration/DynamoDbConfiguration.cs LoanApplication/Configuration/
-cp migration/phase3/LoanApplication/Extensions/ServiceCollectionExtensions.cs LoanApplication/Extensions/
+copy migration\phase3\LoanApplication\Models\DynamoDbLogEntry.cs LoanApplication\Models\
+copy migration\phase3\LoanApplication\Services\IDynamoDbLogService.cs LoanApplication\Services\
+copy migration\phase3\LoanApplication\Services\DynamoDbLogService.cs LoanApplication\Services\
+copy migration\phase3\LoanApplication\Configuration\DynamoDbConfiguration.cs LoanApplication\Configuration\
+copy migration\phase3\LoanApplication\Extensions\ServiceCollectionExtensions.cs LoanApplication\Extensions\
 ```
 
 ### 🏗️ Service Architecture
@@ -59,10 +63,16 @@ LoanApplication/
 
 ### 📦 Add NuGet Packages
 
-```bash
+```powershell
+# Navigate to LoanApplication folder first
+cd LoanApplication
+
 # Add AWS SDK packages
 dotnet add package AWSSDK.DynamoDBv2
 dotnet add package AWSSDK.Extensions.NETCore.Setup
+
+# Return to root folder
+cd ..
 ```
 
 ### ⚙️ Update Configuration
