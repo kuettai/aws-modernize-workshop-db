@@ -2,7 +2,7 @@
 ## Phase 3: DynamoDB Migration - Service Layer Implementation
 
 ### 🎯 Objective
-Create new service layer for DynamoDB operations while maintaining existing SQL Server logging functionality during the migration period.
+Create new service layer for DynamoDB operations while maintaining existing PostgreSQL logging functionality during the migration period.
 
 ### 📁 Copy Required Files
 
@@ -42,7 +42,7 @@ LoanApplication/
 #### DynamoDbLogEntry.cs
 - DynamoDB model with proper attributes
 - Key generation for partition/sort keys
-- Conversion from SQL Server IntegrationLog
+- Conversion from PostgreSQL IntegrationLog
 - TTL support for automatic cleanup
 
 #### IDynamoDbLogService.cs & DynamoDbLogService.cs
