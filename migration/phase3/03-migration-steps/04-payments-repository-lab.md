@@ -117,6 +117,8 @@ mkdir LoanApplication\Repositories -Force
 # Copy repository files
 copy migration\phase3\LoanApplication\Repositories\IPaymentsRepository.cs LoanApplication\Repositories\
 copy migration\phase3\LoanApplication\Repositories\PaymentsRepository.cs LoanApplication\Repositories\
+
+# Copy DynamoDB model (rename to avoid conflict with existing Payment.cs)
 copy migration\phase3\LoanApplication\Models\Payment.cs LoanApplication\Models\DynamoDbPayment.cs
 ```
 
@@ -163,3 +165,6 @@ dotnet run
 
 **Error**: `IPaymentsRepository could not be found`  
 **Fix**: Add `using LoanApplication.Repositories;` to DocsController.cs
+
+**Error**: `Payment does not contain definition for PaymentNumber`  
+**Fix**: Don't overwrite the original Payment.cs - copy as DynamoDbPayment.cs instead
