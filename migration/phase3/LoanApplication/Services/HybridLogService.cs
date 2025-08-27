@@ -119,8 +119,17 @@ namespace LoanApplication.Services
         {
             if (_config.ReadsFromDynamoDb)
             {
-                var dynamoLogs = await _dynamoService.GetErrorLogsByDateAsync(date);
-                return dynamoLogs.Select(ConvertFromDynamoDb);
+                // Get logs from all services for the date and filter errors
+                var services = new[] { "CreditCheckService", "LoanProcessingService", "DocumentService" };
+                var allLogs = new List<DynamoDbLogEntry>();
+                
+                foreach (var service in services)
+                {
+                    var serviceLogs = await _dynamoService.GetLogsByServiceAndTimeRangeAsync(service, date.Date, date.Date.AddDays(1));
+                    allLogs.AddRange(serviceLogs.Where(l => !l.IsSuccess));
+                }
+                
+                return allLogs.Select(ConvertFromDynamoDb);
             }
             else
             {
@@ -136,8 +145,15 @@ namespace LoanApplication.Services
             if (_config.ReadsFromDynamoDb)
             {
                 var today = DateTime.UtcNow.Date;
-                var counts = await _dynamoService.GetLogCountsByDateAsync(today);
-                return counts.Values.Sum();
+                var services = new[] { "CreditCheckService", "LoanProcessingService", "DocumentService" };
+                long totalCount = 0;
+                
+                foreach (var service in services)
+                {
+                    totalCount += await _dynamoService.GetLogCountByServiceAsync(service, today);
+                }
+                
+                return totalCount;
             }
             else
             {
