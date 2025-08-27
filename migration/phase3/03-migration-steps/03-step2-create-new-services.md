@@ -101,10 +101,18 @@ builder.Services.AddDynamoDbServices(builder.Configuration);
 
 ### 🧪 Testing the Service
 
-#### Basic Test Implementation
+#### Add Test Method to DocsController
+
+1. **Add using statements** to `LoanApplication/Controllers/DocsController.cs`:
 ```csharp
-// Test in controller or create unit tests
-public async Task<IActionResult> TestDynamoDb()
+using LoanApplication.Models;
+using LoanApplication.Services;
+```
+
+2. **Add test method** to DocsController:
+```csharp
+[HttpGet("test-dynamodb")]
+public async Task<IActionResult> TestDynamoDb([FromServices] IDynamoDbLogService dynamoDbLogService)
 {
     var testLog = new DynamoDbLogEntry
     {
@@ -117,11 +125,11 @@ public async Task<IActionResult> TestDynamoDb()
         ResponseData = "{\"result\": \"success\"}"
     };
     
-    var success = await _dynamoDbLogService.WriteLogAsync(testLog);
+    var success = await dynamoDbLogService.WriteLogAsync(testLog);
     
     if (success)
     {
-        var retrieved = await _dynamoDbLogService.GetLogByIdAsync(
+        var retrieved = await dynamoDbLogService.GetLogByIdAsync(
             testLog.ServiceName, 
             testLog.LogTimestamp, 
             testLog.LogId);
@@ -132,6 +140,8 @@ public async Task<IActionResult> TestDynamoDb()
     return BadRequest("Failed to write test log");
 }
 ```
+
+3. **Test the endpoint**: Run the app and visit `https://localhost:7139/docs/test-dynamodb`
 
 ### 🚀 Next Steps
 1. **Add NuGet packages** for AWS SDK
