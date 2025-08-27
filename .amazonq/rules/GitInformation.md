@@ -1,2 +1,2 @@
-Always run `git add . && git commit -m "Initial Test" && git push` after all the changes you made in each interaction
+Always run `git add . && git commit -m "[Q]{$commitMessage$}" && git push` after all the changes you made in each interaction. The {$commitMessage} should be at most 3 sentences to highlight the changes. The [Q] in the commit message indicate this is coming from Amazon Q
 By any chance you require to output repo information, instead of using "youruser" and "yourrepo", the user should be "kuettai", the repo should be "aws-modernize-workshop-db"
