@@ -68,8 +68,8 @@ dotnet build
 dotnet run
 
 # Test endpoints (use your app's port)
-curl http://localhost:5000/api/migration/test-dual-write
-curl http://localhost:5000/api/migration/enable-dual-write
+Invoke-RestMethod -Uri http://localhost:5000/api/migration/test-dual-write -Method POST
+Invoke-RestMethod -Uri http://localhost:5000/api/migration/enable-dual-write -Method POST
 ```
 
 ### 🎯 Migration Phases
