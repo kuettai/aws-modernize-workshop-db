@@ -58,7 +58,8 @@ Your interface should have 6-8 methods covering all access patterns. Verify with
 ```csharp
 // Create: LoanApplication/Repositories/PaymentsRepository.cs
 using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.Model;
+using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using LoanApplication.Models;
 using Microsoft.Extensions.Logging;
 
@@ -66,13 +67,13 @@ namespace LoanApplication.Repositories
 {
     public class PaymentsRepository : IPaymentsRepository
     {
-        private readonly IAmazonDynamoDB _dynamoClient;
+        private readonly DynamoDBContext _dynamoContext;
         private readonly ILogger<PaymentsRepository> _logger;
         private const string TABLE_NAME = "Payments";
 
-        public PaymentsRepository(IAmazonDynamoDB dynamoClient, ILogger<PaymentsRepository> logger)
+        public PaymentsRepository(DynamoDBContext dynamoContext, ILogger<PaymentsRepository> logger)
         {
-            _dynamoClient = dynamoClient;
+            _dynamoContext = dynamoContext;
             _logger = logger;
         }
 
@@ -92,7 +93,13 @@ I need to query by PaymentId, but it's part of the sort key. What's the best app
 ```
 
 ### ✅ Checkpoint 2
-You should have a working GetPaymentByIdAsync method. Test it compiles before proceeding.
+You should have a working GetPaymentByIdAsync method. **Key Requirements:**
+- Use `DynamoDBContext` (not `IAmazonDynamoDB`)
+- Include proper using statements for `DataModel` and `DocumentModel`
+- Your `Payment` model needs `[DynamoDBTable("Payments")]` attribute
+- GSI4-PaymentId-Index must exist in your DynamoDB table
+
+Test it compiles before proceeding.
 
 ---
 
@@ -200,8 +207,9 @@ Show me the complete implementation with proper batch handling.
 ```
 @q Update Program.cs to register the PaymentsRepository with dependency injection. Include:
 1. AWS DynamoDB client registration
-2. PaymentsRepository registration
-3. Proper configuration for AWS credentials
+2. DynamoDBContext registration (required for repository)
+3. PaymentsRepository registration
+4. Proper configuration for AWS credentials
 ```
 
 ### Starter Code
@@ -232,6 +240,8 @@ public async Task GetCustomerPayments_ShouldReturnPaymentsInDescendingOrder()
 2. Test GetPaymentsByStatusAsync with different statuses  
 3. Test InsertPaymentAsync and verify data integrity
 4. Use realistic test data for loan application scenario
+
+Note: Repository uses DynamoDBContext, not IAmazonDynamoDB client.
 ```
 
 ---
