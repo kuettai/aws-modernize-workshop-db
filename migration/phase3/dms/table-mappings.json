@@ -23,7 +23,21 @@
       "target-table-name": "LoanApp-IntegrationLogs-dev",
       "mapping-parameters": {
         "partition-key-name": "logid",
-        "sort-key-name": "logtimestamp"
+        "sort-key-name": "logtimestamp",
+        "attribute-mappings": [
+          {
+            "target-attribute-name": "logid",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "number",
+            "value": "${logid}"
+          },
+          {
+            "target-attribute-name": "logtimestamp",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "string",
+            "value": "${logtimestamp}"
+          }
+        ]
       }
     }
   ]
