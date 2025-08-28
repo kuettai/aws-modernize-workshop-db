@@ -5,7 +5,7 @@
       "rule-id": "1",
       "rule-name": "include-integration-logs",
       "object-locator": {
-        "schema-name": "public",
+        "schema-name": "dbo",
         "table-name": "integrationlogs"
       },
       "rule-action": "include"
@@ -17,7 +17,7 @@
       "rule-action": "map-record-to-record",
       "rule-target": "table",
       "object-locator": {
-        "schema-name": "public",
+        "schema-name": "dbo",
         "table-name": "integrationlogs"
       },
       "target-table-name": "LoanApp-IntegrationLogs-dev",

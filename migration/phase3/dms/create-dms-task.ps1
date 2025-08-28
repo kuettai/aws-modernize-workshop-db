@@ -52,7 +52,7 @@ try {
             --engine-name postgres `
             --server-name $PostgreSQLHost `
             --port 5432 `
-            --database-name LoanApplicationDB `
+            --database-name postgres `
             --username postgres `
             --password $PostgreSQLPassword `
             --tags Key=Environment,Value=$Environment
