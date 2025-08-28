@@ -112,11 +112,55 @@ try {
     # 5. Test endpoints
     Write-Host "Step 5: Testing endpoint connections..." -ForegroundColor Yellow
     
-    Write-Host "  Testing PostgreSQL connection..." -ForegroundColor Cyan
-    aws dms test-connection --replication-instance-arn $(aws dms describe-replication-instances --filters Name=replication-instance-id,Values=$ReplicationInstanceId --query 'ReplicationInstances[0].ReplicationInstanceArn' --output text) --endpoint-arn $(aws dms describe-endpoints --filters Name=endpoint-id,Values=$SourceEndpointId --query 'Endpoints[0].EndpointArn' --output text)
+    $replicationInstanceArn = aws dms describe-replication-instances --filters Name=replication-instance-id,Values=$ReplicationInstanceId --query 'ReplicationInstances[0].ReplicationInstanceArn' --output text
+    $sourceEndpointArn = aws dms describe-endpoints --filters Name=endpoint-id,Values=$SourceEndpointId --query 'Endpoints[0].EndpointArn' --output text
+    $targetEndpointArn = aws dms describe-endpoints --filters Name=endpoint-id,Values=$TargetEndpointId --query 'Endpoints[0].EndpointArn' --output text
     
-    Write-Host "  Testing DynamoDB connection..." -ForegroundColor Cyan
-    aws dms test-connection --replication-instance-arn $(aws dms describe-replication-instances --filters Name=replication-instance-id,Values=$ReplicationInstanceId --query 'ReplicationInstances[0].ReplicationInstanceArn' --output text) --endpoint-arn $(aws dms describe-endpoints --filters Name=endpoint-id,Values=$TargetEndpointId --query 'Endpoints[0].EndpointArn' --output text)
+    # Check PostgreSQL connection status
+    Write-Host "  Checking PostgreSQL connection status..." -ForegroundColor Cyan
+    $pgConnectionStatus = aws dms describe-connections --filters Name=endpoint-arn,Values=$sourceEndpointArn Name=replication-instance-arn,Values=$replicationInstanceArn --query 'Connections[0].Status' --output text 2>$null
+    
+    if ($pgConnectionStatus -ne "successful") {
+        Write-Host "  Testing PostgreSQL connection..." -ForegroundColor Cyan
+        aws dms test-connection --replication-instance-arn $replicationInstanceArn --endpoint-arn $sourceEndpointArn
+        
+        # Wait for connection test to complete
+        do {
+            Start-Sleep -Seconds 5
+            $pgConnectionStatus = aws dms describe-connections --filters Name=endpoint-arn,Values=$sourceEndpointArn Name=replication-instance-arn,Values=$replicationInstanceArn --query 'Connections[0].Status' --output text
+            Write-Host "  PostgreSQL connection status: $pgConnectionStatus" -ForegroundColor Gray
+        } while ($pgConnectionStatus -eq "testing")
+    }
+    
+    if ($pgConnectionStatus -eq "successful") {
+        Write-Host "  ✅ PostgreSQL connection successful" -ForegroundColor Green
+    } else {
+        Write-Host "  ❌ PostgreSQL connection failed: $pgConnectionStatus" -ForegroundColor Red
+        exit 1
+    }
+    
+    # Check DynamoDB connection status
+    Write-Host "  Checking DynamoDB connection status..." -ForegroundColor Cyan
+    $dynamoConnectionStatus = aws dms describe-connections --filters Name=endpoint-arn,Values=$targetEndpointArn Name=replication-instance-arn,Values=$replicationInstanceArn --query 'Connections[0].Status' --output text 2>$null
+    
+    if ($dynamoConnectionStatus -ne "successful") {
+        Write-Host "  Testing DynamoDB connection..." -ForegroundColor Cyan
+        aws dms test-connection --replication-instance-arn $replicationInstanceArn --endpoint-arn $targetEndpointArn
+        
+        # Wait for connection test to complete
+        do {
+            Start-Sleep -Seconds 5
+            $dynamoConnectionStatus = aws dms describe-connections --filters Name=endpoint-arn,Values=$targetEndpointArn Name=replication-instance-arn,Values=$replicationInstanceArn --query 'Connections[0].Status' --output text
+            Write-Host "  DynamoDB connection status: $dynamoConnectionStatus" -ForegroundColor Gray
+        } while ($dynamoConnectionStatus -eq "testing")
+    }
+    
+    if ($dynamoConnectionStatus -eq "successful") {
+        Write-Host "  ✅ DynamoDB connection successful" -ForegroundColor Green
+    } else {
+        Write-Host "  ❌ DynamoDB connection failed: $dynamoConnectionStatus" -ForegroundColor Red
+        exit 1
+    }
     
     # 6. Create replication task
     Write-Host "Step 6: Creating replication task..." -ForegroundColor Yellow
@@ -127,9 +171,7 @@ try {
     if (-not $existingTask -or $existingTask -eq "null") {
         Write-Host "  Creating migration task..." -ForegroundColor Cyan
         
-        $replicationInstanceArn = aws dms describe-replication-instances --filters Name=replication-instance-id,Values=$ReplicationInstanceId --query 'ReplicationInstances[0].ReplicationInstanceArn' --output text
-        $sourceEndpointArn = aws dms describe-endpoints --filters Name=endpoint-id,Values=$SourceEndpointId --query 'Endpoints[0].EndpointArn' --output text
-        $targetEndpointArn = aws dms describe-endpoints --filters Name=endpoint-id,Values=$TargetEndpointId --query 'Endpoints[0].EndpointArn' --output text
+        # ARNs already retrieved in Step 5
         
         aws dms create-replication-task `
             --replication-task-identifier $taskId `
