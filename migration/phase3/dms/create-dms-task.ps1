@@ -141,13 +141,34 @@ try {
             --replication-task-settings file://task-settings.json `
             --tags Key=Environment,Value=$Environment Key=Purpose,Value=IntegrationLogsMigration
         
-        Write-Host "  ✅ Replication task created and started: $taskId" -ForegroundColor Green
+        Write-Host "  ✅ Replication task created: $taskId" -ForegroundColor Green
+        
+        # Wait for task to be ready
+        Write-Host "  Waiting for task to be ready..." -ForegroundColor Cyan
+        do {
+            Start-Sleep -Seconds 10
+            $taskStatus = aws dms describe-replication-tasks --filters Name=replication-task-id,Values=$taskId --query 'ReplicationTasks[0].Status' --output text
+            Write-Host "  Task status: $taskStatus" -ForegroundColor Gray
+        } while ($taskStatus -eq "creating")
+        
+        if ($taskStatus -eq "ready") {
+            Write-Host "  ✅ Task is ready" -ForegroundColor Green
+        }
     } else {
         Write-Host "  ✅ Replication task already exists: $taskId" -ForegroundColor Green
     }
     
-    # 7. Monitor progress
-    Write-Host "Step 7: Monitoring migration progress..." -ForegroundColor Yellow
+    # 7. Start replication task
+    Write-Host "Step 7: Starting replication task..." -ForegroundColor Yellow
+    
+    $taskArn = aws dms describe-replication-tasks --filters Name=replication-task-id,Values=$taskId --query 'ReplicationTasks[0].ReplicationTaskArn' --output text
+    
+    aws dms start-replication-task --replication-task-arn $taskArn --start-replication-task-type start-replication
+    
+    Write-Host "  ✅ Migration task started" -ForegroundColor Green
+    
+    # 8. Monitor progress
+    Write-Host "Step 8: Monitoring migration progress..." -ForegroundColor Yellow
     Write-Host "  Use these commands to monitor:" -ForegroundColor Cyan
     Write-Host "  aws dms describe-replication-tasks --filters Name=replication-task-id,Values=$taskId" -ForegroundColor Gray
     Write-Host "  aws dynamodb scan --table-name LoanApp-IntegrationLogs-$Environment --select COUNT" -ForegroundColor Gray
