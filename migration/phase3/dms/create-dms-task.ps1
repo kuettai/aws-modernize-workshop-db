@@ -182,7 +182,8 @@ try {
             --migration-type full-load `
             --table-mappings file://table-mappings.json `
             --replication-task-settings file://task-settings.json `
-            --tags Key=Environment,Value=$Environment Key=Purpose,Value=IntegrationLogsMigration
+            --tags Key=Environment,Value=$Environment Key=Purpose,Value=IntegrationLogsMigration `
+            --output text --query 'ReplicationTask.ReplicationTaskIdentifier' | Out-Null
         
         Write-Host "  ✅ Replication task created: $taskId" -ForegroundColor Green
         
@@ -206,7 +207,7 @@ try {
     
     $taskArn = aws dms describe-replication-tasks --filters Name=replication-task-id,Values=$taskId --query 'ReplicationTasks[0].ReplicationTaskArn' --output text
     
-    aws dms start-replication-task --replication-task-arn $taskArn --start-replication-task-type start-replication
+    aws dms start-replication-task --replication-task-arn $taskArn --start-replication-task-type start-replication --output text | Out-Null
     
     Write-Host "  ✅ Migration task started" -ForegroundColor Green
     
