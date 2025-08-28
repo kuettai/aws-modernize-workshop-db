@@ -6,7 +6,7 @@
       "rule-name": "include-integration-logs",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "integrationlogs"
+        "table-name": "IntegrationLogs"
       },
       "rule-action": "include"
     },
@@ -18,7 +18,7 @@
       "rule-target": "table",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "integrationlogs"
+        "table-name": "IntegrationLogs"
       },
       "target-table-name": "LoanApp-IntegrationLogs-dev",
       "mapping-parameters": {
