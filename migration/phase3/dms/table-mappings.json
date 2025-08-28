@@ -9,36 +9,6 @@
         "table-name": "IntegrationLogs"
       },
       "rule-action": "include"
-    },
-    {
-      "rule-type": "object-mapping",
-      "rule-id": "2",
-      "rule-name": "map-to-dynamodb",
-      "rule-action": "map-record-to-record",
-      "rule-target": "table",
-      "object-locator": {
-        "schema-name": "dbo",
-        "table-name": "IntegrationLogs"
-      },
-      "target-table-name": "LoanApp-IntegrationLogs-dev",
-      "mapping-parameters": {
-        "partition-key-name": "PK",
-        "sort-key-name": "SK",
-        "attribute-mappings": [
-          {
-            "target-attribute-name": "PK",
-            "attribute-type": "scalar",
-            "attribute-sub-type": "string",
-            "value": "${logid}"
-          },
-          {
-            "target-attribute-name": "SK",
-            "attribute-type": "scalar",
-            "attribute-sub-type": "string",
-            "value": "${logtimestamp}"
-          }
-        ]
-      }
     }
   ]
 }
