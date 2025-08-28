@@ -14,6 +14,7 @@
       "rule-type": "object-mapping",
       "rule-id": "2",
       "rule-name": "map-to-dynamodb",
+      "rule-action": "map-record-to-record",
       "rule-target": "table",
       "object-locator": {
         "schema-name": "public",
