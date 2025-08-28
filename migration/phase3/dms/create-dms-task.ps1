@@ -1,7 +1,8 @@
 # Create DMS Replication Task for PostgreSQL to DynamoDB Migration
 param(
+    [Parameter(Mandatory=$true)]
+    [string]$ReplicationInstanceId,
     [string]$Environment = "dev",
-    [string]$ReplicationInstanceId = "loan-app-replication-instance",
     [string]$SourceEndpointId = "postgresql-source",
     [string]$TargetEndpointId = "dynamodb-target",
     [string]$PostgreSQLHost = "localhost",

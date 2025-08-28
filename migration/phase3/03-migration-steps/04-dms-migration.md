@@ -61,8 +61,8 @@ copy migration\\phase3\\dms\\create-dms-task.ps1 .
 ### 🚀 Run DMS Migration
 
 ```powershell
-# Create DMS replication task
-./create-dms-task.ps1 -Environment dev
+# Create DMS replication task (provide your replication instance ID)
+./create-dms-task.ps1 -ReplicationInstanceId "your-replication-instance-id" -Environment dev
 
 # Monitor migration progress
 aws dms describe-replication-tasks --filters Name=replication-task-id,Values=your-task-id
