@@ -5,7 +5,8 @@ param(
     [string]$Environment = "dev",
     [string]$SourceEndpointId = "postgresql-source",
     [string]$TargetEndpointId = "dynamodb-target",
-    [string]$PostgreSQLHost = "localhost",
+    [Parameter(Mandatory=$true)]
+    [string]$PostgreSQLHost,
     [string]$PostgreSQLPassword = "WorkshopDB123!"
 )
 

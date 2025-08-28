@@ -53,8 +53,8 @@ Use AWS DMS to migrate existing PostgreSQL IntegrationLogs data to DynamoDB with
 # Navigate to DMS configuration directory
 cd migration\phase3\dms
 
-# Create DMS replication task (provide your replication instance ID)
-./create-dms-task.ps1 -ReplicationInstanceId "your-replication-instance-id" -Environment dev
+# Create DMS replication task (provide your replication instance ID and Aurora endpoint)
+./create-dms-task.ps1 -ReplicationInstanceId "your-replication-instance-id" -PostgreSQLHost "your-aurora-endpoint" -Environment dev
 
 # Monitor migration progress
 aws dms describe-replication-tasks --filters Name=replication-task-id,Values=your-task-id
