@@ -74,8 +74,8 @@ try {
     if (-not $roleExists -or $roleExists -eq "null") {
         Write-Host "  Creating DMS DynamoDB IAM role..." -ForegroundColor Cyan
         
-        # Create trust policy
-        $trustPolicy = @'
+        # Create trust policy JSON file
+        @"
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -88,9 +88,7 @@ try {
         }
     ]
 }
-'@
-        
-        $trustPolicy | Out-File -FilePath "trust-policy.json" -Encoding utf8
+"@ | Out-File -FilePath "trust-policy.json" -Encoding utf8
         
         # Create role
         aws iam create-role --role-name $roleName --assume-role-policy-document file://trust-policy.json
