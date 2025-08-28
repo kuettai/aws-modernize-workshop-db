@@ -74,30 +74,11 @@ try {
     if (-not $roleExists -or $roleExists -eq "null") {
         Write-Host "  Creating DMS DynamoDB IAM role..." -ForegroundColor Cyan
         
-        # Create trust policy JSON file
-        @"
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "dms.amazonaws.com"
-            },
-            "Action": "sts:AssumeRole"
-        }
-    ]
-}
-"@ | Out-File -FilePath "trust-policy.json" -Encoding utf8
-        
-        # Create role
-        aws iam create-role --role-name $roleName --assume-role-policy-document file://trust-policy.json
+        # Create role using pre-created trust policy
+        aws iam create-role --role-name $roleName --assume-role-policy-document file://dms-trust-policy.json
         
         # Attach DynamoDB full access policy
         aws iam attach-role-policy --role-name $roleName --policy-arn arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
-        
-        # Clean up temp file
-        Remove-Item "trust-policy.json" -Force
         
         Write-Host "  ✅ DMS DynamoDB IAM role created" -ForegroundColor Green
         
