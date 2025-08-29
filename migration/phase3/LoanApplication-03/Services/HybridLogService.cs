@@ -191,15 +191,16 @@ namespace LoanApplication.Services
             try
             {
                 // Use raw SQL to handle string LogTimestamp column
-                var sql = @"SELECT COUNT(*) FROM dbo.""IntegrationLogs"" 
-                           WHERE ""LogTimestamp""::timestamp >= @startDate 
-                           AND ""LogTimestamp""::timestamp <= @endDate";
-                           
-                result.SqlRecordCount = await _pgContext.Database
-                    .SqlQueryRaw<int>(sql, 
-                        new Npgsql.NpgsqlParameter("@startDate", startDate),
-                        new Npgsql.NpgsqlParameter("@endDate", endDate))
-                    .FirstAsync();
+                using var command = _pgContext.Database.GetDbConnection().CreateCommand();
+                command.CommandText = @"SELECT COUNT(*) FROM dbo.""IntegrationLogs"" 
+                                     WHERE ""LogTimestamp""::timestamp >= @startDate 
+                                     AND ""LogTimestamp""::timestamp <= @endDate";
+                command.Parameters.Add(new Npgsql.NpgsqlParameter("@startDate", startDate));
+                command.Parameters.Add(new Npgsql.NpgsqlParameter("@endDate", endDate));
+                
+                await _pgContext.Database.OpenConnectionAsync();
+                var countResult = await command.ExecuteScalarAsync();
+                result.SqlRecordCount = Convert.ToInt32(countResult ?? 0);
                 
                 // Simplified DynamoDB count
                 result.DynamoDbRecordCount = result.SqlRecordCount; // Placeholder
