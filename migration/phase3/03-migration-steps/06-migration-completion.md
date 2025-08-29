@@ -6,9 +6,9 @@ Complete the migration by stopping CDC, switching to DynamoDB-only writes, and v
 
 ### 🚀 Migration Completion Workflow
 
-#### **Step 1: Validate Migration Readiness (5 minutes)**
+#### **Step 1: Validate Migration Readiness (10 minutes)**
 
-**Purpose**: Ensure DMS has fully synchronized and application is stable
+**Purpose**: Ensure DMS has fully synchronized and CDC is working correctly
 
 ```powershell
 # Check DMS task status
@@ -19,8 +19,43 @@ aws dms describe-replication-tasks --filters Name=replication-task-id,Values=pos
 # CDCLatency: < 5 seconds
 # TablesLoaded: 2
 # TablesErrored: 0
+```
 
-# Validate data consistency
+**Test CDC Replication (Critical Step):**
+
+1. **Insert test record via DBeaver:**
+```sql
+-- Connect to PostgreSQL in DBeaver and run:
+INSERT INTO dbo."IntegrationLogs" (
+    "LogType", "ServiceName", "LogTimestamp", 
+    "CorrelationId", "IsSuccess"
+) VALUES (
+    'CDC_TEST', 'MigrationValidation', NOW(), 
+    'cdc-test-' || EXTRACT(EPOCH FROM NOW()), true
+);
+
+-- Note the LogTimestamp for verification
+SELECT "LogId", "LogTimestamp", "CorrelationId" 
+FROM dbo."IntegrationLogs" 
+WHERE "ServiceName" = 'MigrationValidation' 
+ORDER BY "LogTimestamp" DESC LIMIT 1;
+```
+
+2. **Wait 10-30 seconds for CDC replication**
+
+3. **Verify record appears in DynamoDB:**
+```powershell
+# Query DynamoDB for the test record
+aws dynamodb scan --table-name LoanApp-IntegrationLogs-dev `
+    --filter-expression "ServiceName = :svc" `
+    --expression-attribute-values '{":svc":{"S":"MigrationValidation"}}' `
+    --query 'Items[0]'
+
+# Expected Result: Should return the record with matching CorrelationId
+```
+
+4. **Validate overall data consistency:**
+```powershell
 Invoke-RestMethod -Uri http://localhost:5000/api/MigrationDashboard/validate -Method POST
 
 # Expected Results:
@@ -28,6 +63,11 @@ Invoke-RestMethod -Uri http://localhost:5000/api/MigrationDashboard/validate -Me
 # sqlRecordCount: matches dynamoDbRecordCount
 # discrepancies: []
 ```
+
+**✅ CDC Validation Success Criteria:**
+- Test record appears in DynamoDB within 30 seconds
+- CorrelationId matches between PostgreSQL and DynamoDB
+- Overall data consistency validation passes
 
 #### **Step 2: Stop CDC Replication (2 minutes)**
 
