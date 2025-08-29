@@ -1,0 +1,31 @@
+{
+  "MigrationSettings": {
+    "BatchSize": 25,
+    "MaxErrors": 100,
+    "RetryAttempts": 3,
+    "ThrottleBackoffMs": 1000,
+    "ProgressSaveInterval": 100,
+    "ParallelBatches": 4
+  },
+  "DynamoDBSettings": {
+    "TableName": "Payments",
+    "StateTableName": "PaymentMigrationState",
+    "Region": "ap-southeast-1",
+    "MaxRetries": 3
+  },
+  "PostgreSQLSettings": {
+    "ConnectionString": "Host=localhost;Database=LoanApplication;Username=postgres;Password=password",
+    "CommandTimeout": 300,
+    "QueryBatchSize": 1000
+  },
+  "ValidationSettings": {
+    "SampleSize": 100,
+    "PerformanceThresholdMs": 100,
+    "MaxErrorRate": 0.001
+  },
+  "LoggingSettings": {
+    "LogLevel": "Information",
+    "LogToFile": true,
+    "LogFilePath": "migration-{date}.log"
+  }
+}
