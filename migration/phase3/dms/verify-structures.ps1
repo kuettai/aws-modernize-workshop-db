@@ -4,21 +4,19 @@ param(
 )
 
 Write-Host "=== PostgreSQL Table Structures ===" -ForegroundColor Cyan
+Write-Host "Run these queries in DBeaver:" -ForegroundColor Yellow
 
-# Get PostgreSQL table structures
-Write-Host "`nIntegrationLogs columns:" -ForegroundColor Yellow
-psql -h pgaurora-instance-1.crco8oc6go5j.ap-southeast-1.rds.amazonaws.com -d postgres -U postgres -c "
-SELECT column_name, data_type, is_nullable 
-FROM information_schema.columns 
-WHERE table_schema = 'dbo' AND table_name = 'IntegrationLogs'
-ORDER BY ordinal_position;"
+Write-Host "`n-- IntegrationLogs columns:"
+Write-Host "SELECT column_name, data_type, is_nullable "
+Write-Host "FROM information_schema.columns "
+Write-Host "WHERE table_schema = 'dbo' AND table_name = 'IntegrationLogs'"
+Write-Host "ORDER BY ordinal_position;"
 
-Write-Host "`nPayments columns:" -ForegroundColor Yellow  
-psql -h pgaurora-instance-1.crco8oc6go5j.ap-southeast-1.rds.amazonaws.com -d postgres -U postgres -c "
-SELECT column_name, data_type, is_nullable 
-FROM information_schema.columns 
-WHERE table_schema = 'dbo' AND table_name = 'Payments'
-ORDER BY ordinal_position;"
+Write-Host "`n-- Payments columns:"
+Write-Host "SELECT column_name, data_type, is_nullable "
+Write-Host "FROM information_schema.columns "
+Write-Host "WHERE table_schema = 'dbo' AND table_name = 'Payments'"
+Write-Host "ORDER BY ordinal_position;"
 
 Write-Host "`n=== DynamoDB Table Structures ===" -ForegroundColor Cyan
 
