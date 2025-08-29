@@ -92,15 +92,17 @@ Add to appsettings.json:
 }
 ```
 
-### 🔧 Update Program.cs
+### 🔧 Verify Program.cs
 
-Add these services to your existing Program.cs:
+Ensure these services are already registered in your Program.cs (they should be from the baseline application):
 ```csharp
-// Add business services (add these lines)
+// These should already exist:
 builder.Services.AddScoped<ICreditCheckService, CreditCheckService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
 builder.Services.AddScoped<IDSRCalculationService, DSRCalculationService>();
 ```
+
+**Note**: No changes needed to Program.cs - these services are already registered.
 
 ### 🧪 Test Complete Integration
 
