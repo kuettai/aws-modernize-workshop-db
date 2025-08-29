@@ -21,7 +21,7 @@ namespace LoanApplication.Controllers
             
             ViewBag.ApplicationCount = applicationCount;
             ViewBag.CustomerCount = customerCount;
-            ViewBag.DatabaseStatus = "Connected to SQL Server";
+            ViewBag.DatabaseStatus = "Connected to PostgreSQL + DynamoDB (Phase 3: Hybrid Architecture)";
             
             return View();
         }
