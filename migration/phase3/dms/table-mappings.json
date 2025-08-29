@@ -6,7 +6,7 @@
       "rule-name": "include-integration-logs",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "IntegrationLogs"
+        "table-name": "integrationlogs"
       },
       "rule-action": "include"
     },
@@ -16,7 +16,7 @@
       "rule-name": "include-payments",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "Payments"
+        "table-name": "payments"
       },
       "rule-action": "include"
     },
