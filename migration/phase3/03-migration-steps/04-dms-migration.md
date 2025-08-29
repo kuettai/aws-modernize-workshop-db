@@ -72,7 +72,24 @@ SELECT COUNT(*) as integration_logs_count FROM dbo."IntegrationLogs";
 SELECT COUNT(*) as payments_count FROM dbo."Payments";
 ```
 
-**Use the Q Developer prompts above to generate your custom table-mappings.json**
+### 🤖 Generate Table Mappings with Q Developer
+
+Now use this Q Developer prompt with your actual schema results:
+
+```
+@q "Analyze the DynamoDB table schemas and PostgreSQL source tables to generate correct DMS table mappings:
+
+DynamoDB Tables:
+- LoanApp-IntegrationLogs-dev: PK (string), SK (string) + GSI1-ApplicationId-LogTimestamp, GSI2-CorrelationId-LogTimestamp, GSI3-ErrorStatus-LogTimestamp
+- LoanApp-Payments-dev: PaymentId (number, hash only)
+
+PostgreSQL Source Tables:
+[Paste your SQL query results here]
+
+Generate the complete table-mappings.json with proper attribute mappings for both tables."
+```
+
+**Replace the existing table-mappings.json file with Q Developer's generated version**
 
 ### 🚀 Run DMS Migration
 
