@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LoanApplication.Services
 {
-    public partial class CreditCheckService : ICreditCheckService
+    public class CreditCheckService : ICreditCheckService
     {
         private readonly IHybridLogService _logService;
         private readonly ILogger<CreditCheckService> _logger;
@@ -33,8 +33,7 @@ namespace LoanApplication.Services
                 CustomerId = customerId,
                 ApplicationId = applicationId,
                 CreditScore = Random.Shared.Next(300, 850),
-                CheckDate = DateTime.UtcNow,
-                IsApproved = true
+                CheckDate = DateTime.UtcNow
             };
 
             _context.CreditChecks.Add(creditCheck);
