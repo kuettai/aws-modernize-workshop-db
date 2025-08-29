@@ -14,11 +14,11 @@ mkdir LoanApplication\Configuration -Force
 mkdir LoanApplication\Extensions -Force
 
 # Copy all DynamoDB service files
-copy migration\phase3\LoanApplication\Models\DynamoDbLogEntry.cs LoanApplication\Models\
-copy migration\phase3\LoanApplication\Services\IDynamoDbLogService.cs LoanApplication\Services\
-copy migration\phase3\LoanApplication\Services\DynamoDbLogService.cs LoanApplication\Services\
-copy migration\phase3\LoanApplication\Configuration\DynamoDbConfiguration.cs LoanApplication\Configuration\
-copy migration\phase3\LoanApplication\Extensions\ServiceCollectionExtensions.cs LoanApplication\Extensions\
+copy migration\phase3\LoanApplication-02\Models\DynamoDbLogEntry.cs LoanApplication\Models\
+copy migration\phase3\LoanApplication-02\Services\IDynamoDbLogService.cs LoanApplication\Services\
+copy migration\phase3\LoanApplication-02\Services\DynamoDbLogService.cs LoanApplication\Services\
+copy migration\phase3\LoanApplication-02\Configuration\DynamoDbConfiguration.cs LoanApplication\Configuration\
+copy migration\phase3\LoanApplication-02\Extensions\ServiceCollectionExtensions.cs LoanApplication\Extensions\
 ```
 
 ### 🏗️ Service Architecture

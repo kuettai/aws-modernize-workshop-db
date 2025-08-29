@@ -40,11 +40,11 @@ All dual-write files have been pre-created. Copy the complete hybrid logging sys
 
 ```powershell
 # Copy hybrid logging files
-copy migration\phase3\LoanApplication\Services\IHybridLogService.cs LoanApplication\Services\
-copy migration\phase3\LoanApplication\Services\HybridLogService.cs LoanApplication\Services\
-copy migration\phase3\LoanApplication\Configuration\HybridLogConfiguration.cs LoanApplication\Configuration\
-copy migration\phase3\LoanApplication\Controllers\MigrationController.cs LoanApplication\Controllers\
-copy migration\phase3\LoanApplication\Extensions\ServiceCollectionExtensions.cs LoanApplication\Extensions\
+copy migration\phase3\LoanApplication-03\Services\IHybridLogService.cs LoanApplication\Services\
+copy migration\phase3\LoanApplication-03\Services\HybridLogService.cs LoanApplication\Services\
+copy migration\phase3\LoanApplication-03\Configuration\HybridLogConfiguration.cs LoanApplication\Configuration\
+copy migration\phase3\LoanApplication-03\Controllers\MigrationController.cs LoanApplication\Controllers\
+copy migration\phase3\LoanApplication-03\Extensions\ServiceCollectionExtensions.cs LoanApplication\Extensions\
 ```
 
 ### ⚙️ Update Configuration

@@ -67,18 +67,18 @@ All integration files have been pre-created. Copy the complete updated applicati
 
 ```powershell
 # Copy updated controllers
-copy migration\phase3\LoanApplication\Controllers\DocsController.cs LoanApplication\Controllers\
-copy migration\phase3\LoanApplication\Controllers\MigrationDashboardController.cs LoanApplication\Controllers\
+copy migration\phase3\LoanApplication-05\Controllers\DocsController.cs LoanApplication\Controllers\
+copy migration\phase3\LoanApplication-05\Controllers\MigrationDashboardController.cs LoanApplication\Controllers\
 
 # Copy updated services
-copy migration\phase3\LoanApplication\Services\CreditCheckService.cs LoanApplication\Services\
-copy migration\phase3\LoanApplication\Services\ICreditCheckService.cs LoanApplication\Services\
+copy migration\phase3\LoanApplication-05\Services\CreditCheckService.cs LoanApplication\Services\
+copy migration\phase3\LoanApplication-05\Services\ICreditCheckService.cs LoanApplication\Services\
 
 # Copy updated views
-copy migration\phase3\LoanApplication\Views\Docs\Index.cshtml LoanApplication\Views\Docs\
+copy migration\phase3\LoanApplication-05\Views\Docs\Index.cshtml LoanApplication\Views\Docs\
 
 # Copy updated Program.cs
-copy migration\phase3\LoanApplication\Program.cs LoanApplication\
+copy migration\phase3\LoanApplication-05\Program.cs LoanApplication\
 ```
 
 ### ⚙️ Update Configuration
