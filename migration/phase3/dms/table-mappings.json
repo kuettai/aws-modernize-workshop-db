@@ -30,7 +30,25 @@
         "schema-name": "dbo",
         "table-name": "IntegrationLogs"
       },
-      "target-table-name": "LoanApp-IntegrationLogs-dev"
+      "target-table-name": "LoanApp-IntegrationLogs-dev",
+      "mapping-parameters": {
+        "partition-key-name": "PK",
+        "sort-key-name": "SK",
+        "attribute-mappings": [
+          {
+            "target-attribute-name": "PK",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "string",
+            "value": "${LogId}"
+          },
+          {
+            "target-attribute-name": "SK",
+            "attribute-type": "scalar", 
+            "attribute-sub-type": "string",
+            "value": "${LogTimestamp}"
+          }
+        ]
+      }
     },
     {
       "rule-type": "object-mapping",
@@ -42,7 +60,25 @@
         "schema-name": "dbo",
         "table-name": "Payments"
       },
-      "target-table-name": "LoanApp-Payments-dev"
+      "target-table-name": "LoanApp-Payments-dev",
+      "mapping-parameters": {
+        "partition-key-name": "CustomerId",
+        "sort-key-name": "PaymentDateId",
+        "attribute-mappings": [
+          {
+            "target-attribute-name": "CustomerId",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "number",
+            "value": "${CustomerId}"
+          },
+          {
+            "target-attribute-name": "PaymentDateId",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "string", 
+            "value": "${PaymentDate}#${PaymentId}"
+          }
+        ]
+      }
     }
   ]
 }
