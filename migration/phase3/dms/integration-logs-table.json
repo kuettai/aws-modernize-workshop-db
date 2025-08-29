@@ -1,44 +1,11 @@
 {
   "AttributeDefinitions": [
-    {"AttributeName": "PK", "AttributeType": "S"},
-    {"AttributeName": "SK", "AttributeType": "S"},
-    {"AttributeName": "ApplicationId", "AttributeType": "N"},
-    {"AttributeName": "LogTimestamp", "AttributeType": "S"},
-    {"AttributeName": "CorrelationId", "AttributeType": "S"},
-    {"AttributeName": "ErrorStatus", "AttributeType": "S"}
+    {"AttributeName": "LogId", "AttributeType": "N"},
+    {"AttributeName": "LogTimestamp", "AttributeType": "S"}
   ],
   "KeySchema": [
-    {"AttributeName": "PK", "KeyType": "HASH"},
-    {"AttributeName": "SK", "KeyType": "RANGE"}
-  ],
-  "GlobalSecondaryIndexes": [
-    {
-      "IndexName": "GSI1-ApplicationId-LogTimestamp",
-      "KeySchema": [
-        {"AttributeName": "ApplicationId", "KeyType": "HASH"},
-        {"AttributeName": "LogTimestamp", "KeyType": "RANGE"}
-      ],
-      "Projection": {"ProjectionType": "ALL"},
-      "ProvisionedThroughput": {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5}
-    },
-    {
-      "IndexName": "GSI2-CorrelationId-LogTimestamp",
-      "KeySchema": [
-        {"AttributeName": "CorrelationId", "KeyType": "HASH"},
-        {"AttributeName": "LogTimestamp", "KeyType": "RANGE"}
-      ],
-      "Projection": {"ProjectionType": "ALL"},
-      "ProvisionedThroughput": {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5}
-    },
-    {
-      "IndexName": "GSI3-ErrorStatus-LogTimestamp",
-      "KeySchema": [
-        {"AttributeName": "ErrorStatus", "KeyType": "HASH"},
-        {"AttributeName": "LogTimestamp", "KeyType": "RANGE"}
-      ],
-      "Projection": {"ProjectionType": "ALL"},
-      "ProvisionedThroughput": {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5}
-    }
+    {"AttributeName": "LogId", "KeyType": "HASH"},
+    {"AttributeName": "LogTimestamp", "KeyType": "RANGE"}
   ],
   "ProvisionedThroughput": {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5}
 }

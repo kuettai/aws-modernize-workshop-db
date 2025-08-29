@@ -3,12 +3,42 @@
     {
       "rule-type": "selection",
       "rule-id": "1",
-      "rule-name": "include-all-tables",
+      "rule-name": "include-integration-logs",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "%"
+        "table-name": "integrationlogs"
       },
       "rule-action": "include"
+    },
+    {
+      "rule-type": "selection",
+      "rule-id": "2",
+      "rule-name": "include-payments",
+      "object-locator": {
+        "schema-name": "dbo",
+        "table-name": "payments"
+      },
+      "rule-action": "include"
+    },
+    {
+      "rule-type": "table-settings",
+      "rule-id": "3",
+      "rule-name": "integrationlogs-settings",
+      "object-locator": {
+        "schema-name": "dbo",
+        "table-name": "integrationlogs"
+      },
+      "target-table-name": "LoanApp-IntegrationLogs-dev"
+    },
+    {
+      "rule-type": "table-settings",
+      "rule-id": "4",
+      "rule-name": "payments-settings",
+      "object-locator": {
+        "schema-name": "dbo",
+        "table-name": "payments"
+      },
+      "target-table-name": "LoanApp-Payments-dev"
     }
   ]
 }
