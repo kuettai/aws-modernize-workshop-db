@@ -66,9 +66,10 @@ public class CreditCheckService : ICreditCheckService
 All integration files have been pre-created. Copy the complete updated application:
 
 ```powershell
-# Copy updated controllers
+# Copy updated controllers (including migration controls)
 copy migration\phase3\LoanApplication-05\Controllers\DocsController.cs LoanApplication\Controllers\
 copy migration\phase3\LoanApplication-05\Controllers\MigrationDashboardController.cs LoanApplication\Controllers\
+copy migration\phase3\LoanApplication-03\Controllers\MigrationController.cs LoanApplication\Controllers\
 
 # Copy updated services (these extend existing services with new methods)
 copy migration\phase3\LoanApplication-05\Services\CreditCheckService.cs LoanApplication\Services\
@@ -119,7 +120,24 @@ Invoke-RestMethod -Uri http://localhost:5000/api/MigrationDashboard/metrics
 
 # Test validation
 Invoke-RestMethod -Uri http://localhost:5000/api/MigrationDashboard/validate -Method POST
+
+# Test migration controls
+Invoke-RestMethod -Uri http://localhost:5000/api/Migration/enable-dual-write -Method POST
+Invoke-RestMethod -Uri http://localhost:5000/api/Migration/test-dual-write -Method POST
 ```
+
+### ✅ Verify Integration Works
+
+1. **Check Migration Dashboard**: Visit `http://localhost:5000/docs`
+2. **Test Button Functions**: All buttons should work without JavaScript errors
+3. **Verify Configuration Updates**: Check status after clicking buttons
+
+### 🔧 Troubleshooting Common Issues
+
+**JavaScript Error**: Copy latest Phase 3 view file
+**404 Errors**: Copy MigrationController from Step 3
+**Enum Error**: Use `"CurrentPhase": "DualWriteReadDynamo"` in appsettings.json
+**SQL Error**: Ensure latest HybridLogService from Step 3
 
 ### 📊 Migration Dashboard Features
 
