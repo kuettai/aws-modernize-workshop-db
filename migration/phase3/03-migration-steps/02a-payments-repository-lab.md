@@ -7,7 +7,7 @@
 - Test the repository with real DynamoDB operations
 
 ### 📋 Prerequisites
-- DynamoDB Payments table created (from previous steps)
+- DynamoDB Payments table created and populated via DMS migration (LoanApp-Payments-dev)
 - AWS SDK packages installed
 - Basic understanding of repository pattern
 
@@ -157,6 +157,8 @@ dotnet run
 ```
 
 4. **Test the endpoint**: Visit `http://localhost:5000/test-payments`
+
+**Note**: The DynamoDB table now contains migrated data from PostgreSQL via DMS, so you should see actual payment records when testing.
 
 **Estimated Time**: 10-15 minutes  
 **Difficulty**: Easy (copy and test)

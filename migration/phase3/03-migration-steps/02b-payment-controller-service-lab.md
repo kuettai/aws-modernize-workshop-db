@@ -8,6 +8,7 @@
 
 ### 📋 Prerequisites
 - Completed Step 4 (PaymentsRepository implementation)
+- DMS migration completed (PostgreSQL Payments data migrated to LoanApp-Payments-dev)
 - Existing .NET loan application running
 - Understanding of dependency injection
 
