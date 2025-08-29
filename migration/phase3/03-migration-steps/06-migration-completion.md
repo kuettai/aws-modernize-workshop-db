@@ -27,10 +27,10 @@ aws dms describe-replication-tasks --filters Name=replication-task-id,Values=pos
 ```sql
 -- Connect to PostgreSQL in DBeaver and run:
 INSERT INTO dbo."IntegrationLogs" (
-    "LogType", "ServiceName", "LogTimestamp", 
+    "LogId", "LogType", "ServiceName", "LogTimestamp", 
     "CorrelationId", "IsSuccess"
 ) VALUES (
-    'CDC_TEST', 'MigrationValidation', NOW(), 
+    '-1', 'CDC_TEST', 'MigrationValidation', NOW(), 
     'cdc-test-' || EXTRACT(EPOCH FROM NOW()), true
 );
 
@@ -45,21 +45,10 @@ ORDER BY "LogTimestamp" DESC LIMIT 1;
 
 3. **Verify record appears in DynamoDB:**
 ```powershell
-# Query DynamoDB for the test record
-aws dynamodb scan --table-name LoanApp-IntegrationLogs-dev `
-    --filter-expression "ServiceName = :svc" `
-    --expression-attribute-values '{":svc":{"S":"MigrationValidation"}}' `
-    --query 'Items[0]' --profile mmws
+# Query DynamoDB for the test record using LogId = -1
+aws dynamodb get-item --table-name LoanApp-IntegrationLogs-dev --key file://test-key.json --profile mmws
 
-# Alternative if JSON escaping fails:
-aws dynamodb scan --table-name LoanApp-IntegrationLogs-dev --filter-expression "ServiceName = :svc" --expression-attribute-values file://test-query.json --query "Items[0]" --profile mmws
-
-# Create test-query.json file with:
-# {
-#   ":svc": {"S": "MigrationValidation"}
-# }
-
-# Expected Result: Should return the record with matching CorrelationId
+# Expected Result: Should return the record with LogId = -1 and ServiceName = MigrationValidation
 ```
 
 4. **Validate overall data consistency:**
