@@ -24,6 +24,7 @@
       "rule-type": "object-mapping",
       "rule-id": "3",
       "rule-name": "map-integration-logs",
+      "rule-action": "map-record-to-record",
       "rule-target": "table",
       "object-locator": {
         "schema-name": "dbo",
@@ -39,6 +40,7 @@
       "rule-type": "object-mapping",
       "rule-id": "4",
       "rule-name": "map-payments",
+      "rule-action": "map-record-to-record",
       "rule-target": "table",
       "object-locator": {
         "schema-name": "dbo",
