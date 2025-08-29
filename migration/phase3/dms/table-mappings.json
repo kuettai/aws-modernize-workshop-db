@@ -3,67 +3,12 @@
     {
       "rule-type": "selection",
       "rule-id": "1",
-      "rule-name": "include-integration-logs",
+      "rule-name": "include-all-tables",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "integrationlogs"
+        "table-name": "%"
       },
       "rule-action": "include"
-    },
-    {
-      "rule-type": "selection",
-      "rule-id": "2",
-      "rule-name": "include-payments",
-      "object-locator": {
-        "schema-name": "dbo",
-        "table-name": "payments"
-      },
-      "rule-action": "include"
-    },
-    {
-      "rule-type": "object-mapping",
-      "rule-id": "3",
-      "rule-name": "map-integration-logs",
-      "rule-action": "map-record-to-record",
-      "rule-target": "table",
-      "object-locator": {
-        "schema-name": "dbo",
-        "table-name": "integrationlogs"
-      },
-      "target-table-name": "LoanApp-IntegrationLogs-dev",
-      "mapping-parameters": {
-        "partition-key-name": "PK",
-        "sort-key-name": "SK",
-        "attribute-mappings": [
-          {
-            "target-attribute-name": "PK",
-            "attribute-type": "scalar",
-            "attribute-sub-type": "string",
-            "value": "LOG#${LogId}"
-          },
-          {
-            "target-attribute-name": "SK",
-            "attribute-type": "scalar",
-            "attribute-sub-type": "string",
-            "value": "${LogTimestamp}"
-          }
-        ]
-      }
-    },
-    {
-      "rule-type": "object-mapping",
-      "rule-id": "4",
-      "rule-name": "map-payments",
-      "rule-action": "map-record-to-record",
-      "rule-target": "table",
-      "object-locator": {
-        "schema-name": "dbo",
-        "table-name": "payments"
-      },
-      "target-table-name": "LoanApp-Payments-dev",
-      "mapping-parameters": {
-        "partition-key-name": "PaymentId"
-      }
     }
   ]
 }
