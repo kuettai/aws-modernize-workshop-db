@@ -76,9 +76,6 @@ copy migration\phase3\LoanApplication-05\Services\ICreditCheckService.cs LoanApp
 
 # Copy updated views
 copy migration\phase3\LoanApplication-05\Views\Docs\Index.cshtml LoanApplication\Views\Docs\
-
-# Copy updated Program.cs
-copy migration\phase3\LoanApplication-05\Program.cs LoanApplication\
 ```
 
 ### ⚙️ Update Configuration
@@ -93,6 +90,16 @@ Add to appsettings.json:
     "CurrentPhase": "Phase2"
   }
 }
+```
+
+### 🔧 Update Program.cs
+
+Add these services to your existing Program.cs:
+```csharp
+// Add business services (add these lines)
+builder.Services.AddScoped<ICreditCheckService, CreditCheckService>();
+builder.Services.AddScoped<ILoanService, LoanService>();
+builder.Services.AddScoped<IDSRCalculationService, DSRCalculationService>();
 ```
 
 ### 🧪 Test Complete Integration
