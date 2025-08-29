@@ -47,6 +47,22 @@ Use AWS DMS to migrate existing PostgreSQL IntegrationLogs data to DynamoDB with
 }
 ```
 
+### 🔍 Discovery Phase: Analyze Your Schema
+
+Before running the migration, use Q Developer to analyze your specific table structures:
+
+```powershell
+# Get DynamoDB table schemas
+aws dynamodb describe-table --table-name LoanApp-IntegrationLogs-dev --query 'Table.KeySchema'
+aws dynamodb describe-table --table-name LoanApp-Payments-dev --query 'Table.KeySchema'
+
+# Check PostgreSQL source structure
+psql -h your-aurora-endpoint -U postgres -d postgres -c "\d dbo.\"IntegrationLogs\""
+psql -h your-aurora-endpoint -U postgres -d postgres -c "\d dbo.\"Payments\""
+```
+
+**Use the Q Developer prompts above to generate your custom table-mappings.json**
+
 ### 🚀 Run DMS Migration
 
 ```powershell
@@ -67,10 +83,38 @@ aws dynamodb scan --table-name LoanApp-IntegrationLogs-dev --select COUNT
 
 ### 💡 Q Developer Integration Points
 
+#### Step 1: Analyze Target DynamoDB Schema
 ```
-1. "Review this DMS configuration and suggest optimizations for PostgreSQL to DynamoDB migration performance."
+@q "Analyze the DynamoDB table schemas and PostgreSQL source tables to generate correct DMS table mappings:
 
-2. "Analyze the table mapping rules and recommend improvements for data transformation and key generation."
+DynamoDB Tables:
+- LoanApp-IntegrationLogs-dev: PK (string), SK (string) + GSI1-ApplicationId-LogTimestamp, GSI2-CorrelationId-LogTimestamp, GSI3-ErrorStatus-LogTimestamp
+- LoanApp-Payments-dev: PaymentId (number, hash only)
+
+PostgreSQL Source Tables:
+- dbo.IntegrationLogs: LogId (int), LogTimestamp (timestamp), ApplicationId (int), CorrelationId (string), ErrorStatus (string)
+- dbo.Payments: PaymentId (int), CustomerId (int), PaymentDate (timestamp), PaymentAmount (decimal)
+
+Generate the complete table-mappings.json with proper attribute mappings for both tables."
+```
+
+#### Step 2: Optimize Migration Performance
+```
+@q "Review this DMS configuration and suggest optimizations for PostgreSQL to DynamoDB migration performance:
+- Source: Aurora PostgreSQL with 100K+ IntegrationLogs records
+- Target: DynamoDB with provisioned throughput
+- Migration type: Full load only
+
+Recommend task-settings.json optimizations for batch size, parallel load, and error handling."
+```
+
+#### Step 3: Validate Mapping Rules
+```
+@q "Analyze these DMS table mapping rules and recommend improvements for data transformation and key generation:
+
+[Paste your table-mappings.json content here]
+
+Ensure proper GSI attribute population and optimal key distribution for DynamoDB best practices."
 ```
 
 **Next**: [Application Integration](./05-application-integration.md)
