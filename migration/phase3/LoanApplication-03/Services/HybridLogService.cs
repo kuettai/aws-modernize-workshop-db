@@ -190,9 +190,16 @@ namespace LoanApplication.Services
             
             try
             {
-                result.SqlRecordCount = await _pgContext.IntegrationLogs
-                    .Where(l => l.LogTimestamp >= startDate && l.LogTimestamp <= endDate)
-                    .CountAsync();
+                // Use raw SQL to handle string LogTimestamp column
+                var sql = @"SELECT COUNT(*) FROM dbo.""IntegrationLogs"" 
+                           WHERE ""LogTimestamp""::timestamp >= @startDate 
+                           AND ""LogTimestamp""::timestamp <= @endDate";
+                           
+                result.SqlRecordCount = await _pgContext.Database
+                    .SqlQueryRaw<int>(sql, 
+                        new Npgsql.NpgsqlParameter("@startDate", startDate),
+                        new Npgsql.NpgsqlParameter("@endDate", endDate))
+                    .FirstAsync();
                 
                 // Simplified DynamoDB count
                 result.DynamoDbRecordCount = result.SqlRecordCount; // Placeholder
