@@ -173,4 +173,4 @@ Invoke-RestMethod -Uri http://localhost:5000/api/Migration/test-dual-write -Meth
 3. "Examine the dashboard implementation and suggest enhancements for real-time monitoring and alerting during the migration process."
 ```
 
-**Next**: [Testing and Validation](../05-comparison/01-validation-procedures.md)
+**Next**: [Migration Completion](./06-migration-completion.md)
