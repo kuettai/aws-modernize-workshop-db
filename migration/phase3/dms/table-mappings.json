@@ -6,7 +6,7 @@
       "rule-name": "include-integration-logs",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "IntegrationLogs"
+        "table-name": "integrationlogs"
       },
       "rule-action": "include"
     },
@@ -16,7 +16,7 @@
       "rule-name": "include-payments",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "Payments"
+        "table-name": "payments"
       },
       "rule-action": "include"
     },
@@ -28,12 +28,26 @@
       "rule-target": "table",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "IntegrationLogs"
+        "table-name": "integrationlogs"
       },
       "target-table-name": "LoanApp-IntegrationLogs-dev",
       "mapping-parameters": {
-        "partition-key-name": "LogId",
-        "sort-key-name": "LogTimestamp"
+        "partition-key-name": "PK",
+        "sort-key-name": "SK",
+        "attribute-mappings": [
+          {
+            "target-attribute-name": "PK",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "string",
+            "value": "LOG#${LogId}"
+          },
+          {
+            "target-attribute-name": "SK",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "string",
+            "value": "${LogTimestamp}"
+          }
+        ]
       }
     },
     {
@@ -44,7 +58,7 @@
       "rule-target": "table",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "Payments"
+        "table-name": "payments"
       },
       "target-table-name": "LoanApp-Payments-dev",
       "mapping-parameters": {
