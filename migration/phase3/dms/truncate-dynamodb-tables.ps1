@@ -11,55 +11,43 @@ $tables = @(
 )
 
 foreach ($table in $tables) {
-    Write-Host "Truncating table: $table" -ForegroundColor Cyan
+    Write-Host "Recreating table: $table" -ForegroundColor Cyan
     
     # Check if table exists
     $tableExists = aws dynamodb describe-table --table-name $table --query 'Table.TableName' --output text 2>$null
     
     if ($tableExists -and $tableExists -ne "null") {
-        # Get table key schema to know what keys to delete
-        $keySchema = aws dynamodb describe-table --table-name $table --query 'Table.KeySchema' --output json | ConvertFrom-Json
-        $hashKey = ($keySchema | Where-Object { $_.KeyType -eq "HASH" }).AttributeName
-        $rangeKey = ($keySchema | Where-Object { $_.KeyType -eq "RANGE" }).AttributeName
+        # Delete table
+        Write-Host "  Deleting existing table..." -ForegroundColor Gray
+        aws dynamodb delete-table --table-name $table --output text | Out-Null
         
-        Write-Host "  Hash Key: $hashKey" -ForegroundColor Gray
-        if ($rangeKey) { Write-Host "  Range Key: $rangeKey" -ForegroundColor Gray }
-        
-        # Scan and delete all items
-        Write-Host "  Scanning and deleting items..." -ForegroundColor Gray
-        
-        do {
-            if ($rangeKey) {
-                # Table has both hash and range key
-                $items = aws dynamodb scan --table-name $table --projection-expression "$hashKey, $rangeKey" --max-items 25 --output json | ConvertFrom-Json
-            } else {
-                # Table has only hash key
-                $items = aws dynamodb scan --table-name $table --projection-expression "$hashKey" --max-items 25 --output json | ConvertFrom-Json
-            }
-            
-            if ($items.Items -and $items.Items.Count -gt 0) {
-                # Build batch delete request
-                $deleteRequests = @()
-                foreach ($item in $items.Items) {
-                    $key = @{}
-                    $key[$hashKey] = $item.$hashKey
-                    if ($rangeKey) { $key[$rangeKey] = $item.$rangeKey }
-                    
-                    $deleteRequests += @{ "DeleteRequest" = @{ "Key" = $key } }
-                }
-                
-                $batchRequest = @{ $table = $deleteRequests } | ConvertTo-Json -Depth 10
-                aws dynamodb batch-write-item --request-items $batchRequest --output text | Out-Null
-                
-                Write-Host "    Deleted $($items.Items.Count) items" -ForegroundColor Gray
-            }
-        } while ($items.Items -and $items.Items.Count -gt 0)
-        
-        Write-Host "  ✅ Table truncated: $table (GSIs preserved)" -ForegroundColor Green
-    } else {
-        Write-Host "  ⚠️ Table not found: $table" -ForegroundColor Yellow
+        # Wait for deletion
+        aws dynamodb wait table-not-exists --table-name $table
+        Write-Host "  ✅ Table deleted" -ForegroundColor Green
     }
+    
+    # Recreate table based on table name
+    Write-Host "  Creating new table..." -ForegroundColor Gray
+    
+    if ($table -like "*IntegrationLogs*") {
+        # IntegrationLogs table with composite key and GSIs
+        aws dynamodb create-table --table-name $table `
+            --attribute-definitions AttributeName=PK,AttributeType=S AttributeName=SK,AttributeType=S AttributeName=ApplicationId,AttributeType=N AttributeName=LogTimestamp,AttributeType=S AttributeName=CorrelationId,AttributeType=S AttributeName=ErrorStatus,AttributeType=S `
+            --key-schema AttributeName=PK,KeyType=HASH AttributeName=SK,KeyType=RANGE `
+            --global-secondary-indexes IndexName=GSI1-ApplicationId-LogTimestamp,KeySchema=[{AttributeName=ApplicationId,KeyType=HASH},{AttributeName=LogTimestamp,KeyType=RANGE}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5} IndexName=GSI2-CorrelationId-LogTimestamp,KeySchema=[{AttributeName=CorrelationId,KeyType=HASH},{AttributeName=LogTimestamp,KeyType=RANGE}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5} IndexName=GSI3-ErrorStatus-LogTimestamp,KeySchema=[{AttributeName=ErrorStatus,KeyType=HASH},{AttributeName=LogTimestamp,KeyType=RANGE}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5} `
+            --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --output text | Out-Null
+    } elseif ($table -like "*Payments*") {
+        # Payments table with single key
+        aws dynamodb create-table --table-name $table `
+            --attribute-definitions AttributeName=PaymentId,AttributeType=N `
+            --key-schema AttributeName=PaymentId,KeyType=HASH `
+            --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --output text | Out-Null
+    }
+    
+    # Wait for table to be active
+    aws dynamodb wait table-exists --table-name $table
+    Write-Host "  ✅ Table recreated: $table" -ForegroundColor Green
 }
 
-Write-Host "`n✅ DynamoDB tables truncated!" -ForegroundColor Green
-Write-Host "Tables and GSIs preserved - only data deleted." -ForegroundColor White
+Write-Host "`n✅ DynamoDB tables recreated!" -ForegroundColor Green
+Write-Host "Fresh tables with correct PK/SK and GSIs ready for migration." -ForegroundColor White
