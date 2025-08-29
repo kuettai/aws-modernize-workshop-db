@@ -1,22 +1,32 @@
 # Step 4: DMS Migration - PostgreSQL to DynamoDB
-## Phase 3: Historical Data Transfer using AWS Database Migration Service
+## Phase 3: Full Load + CDC Migration using AWS Database Migration Service
 
 ### 🎯 Objective
-Use AWS DMS to migrate existing PostgreSQL IntegrationLogs data to DynamoDB with proper transformations and validation.
+Use AWS DMS to migrate existing PostgreSQL data (IntegrationLogs + Payments) to DynamoDB with FULL LOAD + CDC for real-time synchronization during the migration period.
 
 ### 📚 Learning Examples
 
-#### Example 1: Basic DMS Task Configuration
+#### Example 1: DMS Task Configuration (FULL LOAD + CDC)
 ```json
 {
   "rules": [
     {
       "rule-type": "selection",
       "rule-id": "1",
-      "rule-name": "1",
+      "rule-name": "include-integration-logs",
       "object-locator": {
-        "schema-name": "public",
+        "schema-name": "dbo",
         "table-name": "IntegrationLogs"
+      },
+      "rule-action": "include"
+    },
+    {
+      "rule-type": "selection",
+      "rule-id": "2", 
+      "rule-name": "include-payments",
+      "object-locator": {
+        "schema-name": "dbo",
+        "table-name": "Payments"
       },
       "rule-action": "include"
     }
@@ -91,20 +101,33 @@ Generate the complete table-mappings.json with proper attribute mappings for bot
 
 **Replace the existing table-mappings.json file with Q Developer's generated version**
 
-### 🚀 Run DMS Migration
+### 🚀 Run DMS Migration (FULL LOAD + CDC)
 
 ```powershell
 # Navigate to DMS configuration directory
 cd migration\phase3\dms
 
-# Create DMS replication task (provide your replication instance ID and Aurora endpoint)
-./create-dms-task.ps1 -ReplicationInstanceId "your-replication-instance-id" -PostgreSQLHost "your-aurora-endpoint" -Environment dev
+# Create DMS replication task with FULL LOAD + CDC
+./create-dms-task.ps1 -ReplicationInstanceId "your-replication-instance-id" -PostgreSQLHost "your-aurora-endpoint" -Environment dev -MigrationType "full-load-and-cdc"
 
-# Monitor migration progress
-aws dms describe-replication-tasks --filters Name=replication-task-id,Values=your-task-id
+# Monitor migration progress (Full Load phase)
+aws dms describe-replication-tasks --filters Name=replication-task-id,Values=your-task-id --query 'ReplicationTasks[0].ReplicationTaskStats'
 
-# Validate migration
+# Expected Results:
+# FullLoadProgressPercent: 100
+# TablesLoaded: 2 (IntegrationLogs + Payments)
+# TablesLoading: 0
+# CDCLatency: < 10 seconds
+
+# Validate migration counts
 aws dynamodb scan --table-name LoanApp-IntegrationLogs-dev --select COUNT
+aws dynamodb scan --table-name LoanApp-Payments-dev --select COUNT
+
+# Test CDC by making changes to PostgreSQL
+psql -h your-aurora-endpoint -d LoanApplication -c "INSERT INTO dbo.\"IntegrationLogs\" (LogType, ServiceName, LogTimestamp) VALUES ('TEST', 'CDCTest', NOW());"
+
+# Verify CDC replication (should appear in DynamoDB within seconds)
+aws dynamodb scan --table-name LoanApp-IntegrationLogs-dev --filter-expression "ServiceName = :svc" --expression-attribute-values '{":svc":{"S":"CDCTest"}}'
 ```
 
 ---

@@ -7,7 +7,8 @@ param(
     [string]$TargetEndpointId = "dynamodb-target",
     [Parameter(Mandatory=$true)]
     [string]$PostgreSQLHost,
-    [string]$PostgreSQLPassword = "WorkshopDB123!"
+    [string]$PostgreSQLPassword = "WorkshopDB123!",
+    [string]$MigrationType = "full-load-and-cdc"
 )
 
 Write-Host "🚀 Creating DMS Migration Task for PostgreSQL to DynamoDB" -ForegroundColor Green
@@ -179,10 +180,10 @@ try {
             --source-endpoint-arn $sourceEndpointArn `
             --target-endpoint-arn $targetEndpointArn `
             --replication-instance-arn $replicationInstanceArn `
-            --migration-type full-load `
+            --migration-type $MigrationType `
             --table-mappings file://table-mappings.json `
             --replication-task-settings file://task-settings.json `
-            --tags Key=Environment,Value=$Environment Key=Purpose,Value=IntegrationLogsMigration `
+            --tags Key=Environment,Value=$Environment Key=Purpose,Value=IntegrationLogsAndPaymentsMigration `
             --output text --query 'ReplicationTask.ReplicationTaskIdentifier' | Out-Null
         
         Write-Host "  ✅ Replication task created: $taskId" -ForegroundColor Green
