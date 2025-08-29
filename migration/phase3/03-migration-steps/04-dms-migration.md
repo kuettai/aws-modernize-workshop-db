@@ -56,9 +56,20 @@ Before running the migration, use Q Developer to analyze your specific table str
 aws dynamodb describe-table --table-name LoanApp-IntegrationLogs-dev --query 'Table.KeySchema'
 aws dynamodb describe-table --table-name LoanApp-Payments-dev --query 'Table.KeySchema'
 
-# Check PostgreSQL source structure
-psql -h your-aurora-endpoint -U postgres -d postgres -c "\d dbo.\"IntegrationLogs\""
-psql -h your-aurora-endpoint -U postgres -d postgres -c "\d dbo.\"Payments\""
+# Check PostgreSQL source structure (run in DBeaver)
+SELECT column_name, data_type, is_nullable, column_default 
+FROM information_schema.columns 
+WHERE table_schema = 'dbo' AND table_name = 'IntegrationLogs'
+ORDER BY ordinal_position;
+
+SELECT column_name, data_type, is_nullable, column_default 
+FROM information_schema.columns 
+WHERE table_schema = 'dbo' AND table_name = 'Payments'
+ORDER BY ordinal_position;
+
+# Check record counts
+SELECT COUNT(*) as integration_logs_count FROM dbo."IntegrationLogs";
+SELECT COUNT(*) as payments_count FROM dbo."Payments";
 ```
 
 **Use the Q Developer prompts above to generate your custom table-mappings.json**
