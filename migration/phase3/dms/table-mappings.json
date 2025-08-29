@@ -21,9 +21,11 @@
       "rule-action": "include"
     },
     {
-      "rule-type": "table-settings",
+      "rule-type": "object-mapping",
       "rule-id": "3",
-      "rule-name": "integrationlogs-settings",
+      "rule-name": "map-integration-logs",
+      "rule-action": "map-record-to-record",
+      "rule-target": "table",
       "object-locator": {
         "schema-name": "dbo",
         "table-name": "integrationlogs"
@@ -31,9 +33,11 @@
       "target-table-name": "LoanApp-IntegrationLogs-dev"
     },
     {
-      "rule-type": "table-settings",
+      "rule-type": "object-mapping",
       "rule-id": "4",
-      "rule-name": "payments-settings",
+      "rule-name": "map-payments",
+      "rule-action": "map-record-to-record",
+      "rule-target": "table",
       "object-locator": {
         "schema-name": "dbo",
         "table-name": "payments"

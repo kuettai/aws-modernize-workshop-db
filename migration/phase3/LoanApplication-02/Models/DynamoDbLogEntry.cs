@@ -5,14 +5,11 @@ namespace LoanApplication.Models
     [DynamoDBTable("LoanApp-IntegrationLogs-dev")]
     public class DynamoDbLogEntry
     {
-        [DynamoDBHashKey("PK")]
-        public string PartitionKey { get; set; } = string.Empty;
-        
-        [DynamoDBRangeKey("SK")]
-        public string SortKey { get; set; } = string.Empty;
-        
-        [DynamoDBProperty("LogId")]
+        [DynamoDBHashKey("LogId")]
         public long LogId { get; set; }
+        
+        [DynamoDBRangeKey("LogTimestamp")]
+        public string LogTimestamp { get; set; } = string.Empty;
         
         [DynamoDBProperty("ApplicationId")]
         public int? ApplicationId { get; set; }
@@ -41,9 +38,6 @@ namespace LoanApplication.Models
         [DynamoDBProperty("ProcessingTimeMs")]
         public int? ProcessingTimeMs { get; set; }
         
-        [DynamoDBProperty("LogTimestamp")]
-        public DateTime LogTimestamp { get; set; }
-        
         [DynamoDBProperty("CorrelationId")]
         public string? CorrelationId { get; set; }
         
@@ -55,12 +49,6 @@ namespace LoanApplication.Models
 
         public void GenerateKeys()
         {
-            var dateStr = LogTimestamp.ToString("yyyy-MM-dd");
-            var timestampStr = LogTimestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-            
-            PartitionKey = $"{ServiceName}-{dateStr}";
-            SortKey = $"{timestampStr}#{LogId}";
-            
             TTL = DateTimeOffset.UtcNow.AddDays(90).ToUnixTimeSeconds();
         }
         
@@ -69,6 +57,7 @@ namespace LoanApplication.Models
             var dynamoLog = new DynamoDbLogEntry
             {
                 LogId = sqlLog.LogId,
+                LogTimestamp = sqlLog.LogTimestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                 ApplicationId = sqlLog.ApplicationId,
                 LogType = sqlLog.LogType,
                 ServiceName = sqlLog.ServiceName,
@@ -78,7 +67,6 @@ namespace LoanApplication.Models
                 IsSuccess = sqlLog.IsSuccess,
                 ErrorMessage = sqlLog.ErrorMessage,
                 ProcessingTimeMs = sqlLog.ProcessingTimeMs,
-                LogTimestamp = sqlLog.LogTimestamp,
                 CorrelationId = sqlLog.CorrelationId,
                 UserId = sqlLog.UserId
             };

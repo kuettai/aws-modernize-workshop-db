@@ -58,20 +58,9 @@ namespace LoanApplication.Services
         {
             try
             {
-                var dateStr = date.ToString("yyyy-MM-dd");
-                var pk = $"{serviceName}-{dateStr}";
-                
                 var queryConfig = new QueryOperationConfig
                 {
                     KeyExpression = new Expression
-                    {
-                        ExpressionStatement = "PK = :pk",
-                        ExpressionAttributeValues = new Dictionary<string, DynamoDBEntry>
-                        {
-                            { ":pk", pk }
-                        }
-                    },
-                    FilterExpression = new Expression
                     {
                         ExpressionStatement = "LogId = :logId",
                         ExpressionAttributeValues = new Dictionary<string, DynamoDBEntry>
