@@ -30,7 +30,25 @@
         "schema-name": "dbo",
         "table-name": "IntegrationLogs"
       },
-      "target-table-name": "LoanApp-IntegrationLogs-dev"
+      "target-table-name": "LoanApp-IntegrationLogs-dev",
+      "mapping-parameters": {
+        "partition-key-name": "LogId",
+        "sort-key-name": "LogTimestamp",
+        "attribute-mappings": [
+          {
+            "target-attribute-name": "LogId",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "number",
+            "value": "${LogId}"
+          },
+          {
+            "target-attribute-name": "LogTimestamp",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "string",
+            "value": "${LogTimestamp}"
+          }
+        ]
+      }
     },
     {
       "rule-type": "object-mapping",
@@ -42,7 +60,18 @@
         "schema-name": "dbo",
         "table-name": "Payments"
       },
-      "target-table-name": "LoanApp-Payments-dev"
+      "target-table-name": "LoanApp-Payments-dev",
+      "mapping-parameters": {
+        "partition-key-name": "PaymentId",
+        "attribute-mappings": [
+          {
+            "target-attribute-name": "PaymentId",
+            "attribute-type": "scalar",
+            "attribute-sub-type": "number",
+            "value": "${PaymentId}"
+          }
+        ]
+      }
     }
   ]
 }
