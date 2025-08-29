@@ -1,0 +1,9 @@
+{
+  "AttributeDefinitions": [
+    {"AttributeName": "PaymentId", "AttributeType": "N"}
+  ],
+  "KeySchema": [
+    {"AttributeName": "PaymentId", "KeyType": "HASH"}
+  ],
+  "ProvisionedThroughput": {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5}
+}

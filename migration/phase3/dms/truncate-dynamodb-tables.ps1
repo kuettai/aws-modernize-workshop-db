@@ -31,17 +31,10 @@ foreach ($table in $tables) {
     
     if ($table -like "*IntegrationLogs*") {
         # IntegrationLogs table with composite key and GSIs
-        aws dynamodb create-table --table-name $table `
-            --attribute-definitions AttributeName=PK,AttributeType=S AttributeName=SK,AttributeType=S AttributeName=ApplicationId,AttributeType=N AttributeName=LogTimestamp,AttributeType=S AttributeName=CorrelationId,AttributeType=S AttributeName=ErrorStatus,AttributeType=S `
-            --key-schema AttributeName=PK,KeyType=HASH AttributeName=SK,KeyType=RANGE `
-            --global-secondary-indexes IndexName=GSI1-ApplicationId-LogTimestamp,KeySchema=[{AttributeName=ApplicationId,KeyType=HASH},{AttributeName=LogTimestamp,KeyType=RANGE}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5} IndexName=GSI2-CorrelationId-LogTimestamp,KeySchema=[{AttributeName=CorrelationId,KeyType=HASH},{AttributeName=LogTimestamp,KeyType=RANGE}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5} IndexName=GSI3-ErrorStatus-LogTimestamp,KeySchema=[{AttributeName=ErrorStatus,KeyType=HASH},{AttributeName=LogTimestamp,KeyType=RANGE}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5} `
-            --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --output text | Out-Null
+        aws dynamodb create-table --table-name $table --cli-input-json file://integration-logs-table.json --output text | Out-Null
     } elseif ($table -like "*Payments*") {
         # Payments table with single key
-        aws dynamodb create-table --table-name $table `
-            --attribute-definitions AttributeName=PaymentId,AttributeType=N `
-            --key-schema AttributeName=PaymentId,KeyType=HASH `
-            --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --output text | Out-Null
+        aws dynamodb create-table --table-name $table --cli-input-json file://payments-table.json --output text | Out-Null
     }
     
     # Wait for table to be active
