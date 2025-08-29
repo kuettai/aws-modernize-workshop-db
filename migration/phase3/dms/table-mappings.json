@@ -6,7 +6,7 @@
       "rule-name": "include-integration-logs",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "integrationlogs"
+        "table-name": "IntegrationLogs"
       },
       "rule-action": "include"
     },
@@ -16,7 +16,7 @@
       "rule-name": "include-payments",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "payments"
+        "table-name": "Payments"
       },
       "rule-action": "include"
     },
@@ -28,7 +28,7 @@
       "rule-target": "table",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "integrationlogs"
+        "table-name": "IntegrationLogs"
       },
       "target-table-name": "LoanApp-IntegrationLogs-dev"
     },
@@ -40,7 +40,7 @@
       "rule-target": "table",
       "object-locator": {
         "schema-name": "dbo",
-        "table-name": "payments"
+        "table-name": "Payments"
       },
       "target-table-name": "LoanApp-Payments-dev"
     }
