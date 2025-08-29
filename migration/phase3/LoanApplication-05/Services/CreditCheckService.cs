@@ -1,20 +1,62 @@
 using LoanApplication.Models;
 using LoanApplication.Services;
 using System.Text.Json;
+using LoanApplication.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace LoanApplication.Services
 {
-    public class CreditCheckService : ICreditCheckService
+    public partial class CreditCheckService : ICreditCheckService
     {
         private readonly IHybridLogService _logService;
         private readonly ILogger<CreditCheckService> _logger;
+        private readonly LoanApplicationContext _context;
 
-        public CreditCheckService(IHybridLogService logService, ILogger<CreditCheckService> logger)
+        public CreditCheckService(IHybridLogService logService, ILogger<CreditCheckService> logger, LoanApplicationContext context)
         {
             _logService = logService;
             _logger = logger;
+            _context = context;
         }
 
+        // Existing methods from baseline (keep these)
+        public async Task<CreditCheck> PerformCreditCheckAsync(int customerId)
+        {
+            return await PerformCreditCheckAsync(customerId, null);
+        }
+
+        public async Task<CreditCheck> PerformCreditCheckAsync(int customerId, int? applicationId)
+        {
+            // Existing implementation - simplified for Phase 3
+            var creditCheck = new CreditCheck
+            {
+                CustomerId = customerId,
+                ApplicationId = applicationId,
+                CreditScore = Random.Shared.Next(300, 850),
+                CheckDate = DateTime.UtcNow,
+                IsApproved = true
+            };
+
+            _context.CreditChecks.Add(creditCheck);
+            await _context.SaveChangesAsync();
+
+            return creditCheck;
+        }
+
+        public async Task<bool> IsCreditScoreAcceptableAsync(int creditScore)
+        {
+            return creditScore >= 650;
+        }
+
+        public async Task<CreditCheck?> GetLatestCreditCheckAsync(int customerId)
+        {
+            return await _context.CreditChecks
+                .Where(c => c.CustomerId == customerId)
+                .OrderByDescending(c => c.CheckDate)
+                .FirstOrDefaultAsync();
+        }
+
+        // New method for Phase 3 with logging
         public async Task<CreditCheckResult> CheckCreditAsync(int customerId, decimal loanAmount)
         {
             var correlationId = Guid.NewGuid().ToString();

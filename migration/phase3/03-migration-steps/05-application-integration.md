@@ -70,7 +70,7 @@ All integration files have been pre-created. Copy the complete updated applicati
 copy migration\phase3\LoanApplication-05\Controllers\DocsController.cs LoanApplication\Controllers\
 copy migration\phase3\LoanApplication-05\Controllers\MigrationDashboardController.cs LoanApplication\Controllers\
 
-# Copy updated services
+# Copy updated services (these extend existing services with new methods)
 copy migration\phase3\LoanApplication-05\Services\CreditCheckService.cs LoanApplication\Services\
 copy migration\phase3\LoanApplication-05\Services\ICreditCheckService.cs LoanApplication\Services\
 

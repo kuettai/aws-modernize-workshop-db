@@ -2,7 +2,8 @@ using LoanApplication.Models;
 
 namespace LoanApplication.Services
 {
-    public interface ICreditCheckService
+    // Extend existing interface with new method for Phase 3
+    public partial interface ICreditCheckService
     {
         Task<CreditCheckResult> CheckCreditAsync(int customerId, decimal loanAmount);
     }
