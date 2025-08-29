@@ -49,7 +49,15 @@ ORDER BY "LogTimestamp" DESC LIMIT 1;
 aws dynamodb scan --table-name LoanApp-IntegrationLogs-dev `
     --filter-expression "ServiceName = :svc" `
     --expression-attribute-values '{":svc":{"S":"MigrationValidation"}}' `
-    --query 'Items[0]'
+    --query 'Items[0]' --profile mmws
+
+# Alternative if JSON escaping fails:
+aws dynamodb scan --table-name LoanApp-IntegrationLogs-dev --filter-expression "ServiceName = :svc" --expression-attribute-values file://test-query.json --query "Items[0]" --profile mmws
+
+# Create test-query.json file with:
+# {
+#   ":svc": {"S": "MigrationValidation"}
+# }
 
 # Expected Result: Should return the record with matching CorrelationId
 ```
