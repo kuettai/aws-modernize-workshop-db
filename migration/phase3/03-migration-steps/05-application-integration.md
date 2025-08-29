@@ -87,7 +87,7 @@ Add to appsettings.json:
     "WritesToSql": true,
     "WritesToDynamoDb": true,
     "ReadsFromDynamoDb": true,
-    "CurrentPhase": "Phase2"
+    "CurrentPhase": "DualWriteReadDynamo"
   }
 }
 ```
